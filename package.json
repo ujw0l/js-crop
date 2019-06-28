@@ -1,6 +1,6 @@
 {
   "name": "js-crop",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Library to enable image cropping",
   "main": "js-crop.js",
   "scripts": {
@@ -11,8 +11,9 @@
     "url": "git+https://github.com/ujw0l/js-crop.git"
   },
   "keywords": [
-    "croping",
-    "image-cropping"
+    "crop",
+    "image-crop",
+     "vanilla-js-cropping"
   ],
   "author": "ujw0l",
   "license": "MIT",

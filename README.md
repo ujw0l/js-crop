@@ -32,8 +32,13 @@ include js-crop.js
 
  new jsCrop('selector');
 
-*selector for images to be cropped, one or multiple
+*selector for image/images to be cropped, one or multiple
 ```
+
+## Functionaltiy 
+
+After initalizing and clicking on image, will open image on overlay where the cropping os will take place.   
+
 
 ## Contributing
 
