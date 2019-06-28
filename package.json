@@ -1,7 +1,7 @@
 {
   "name": "js-crop",
-  "version": "1.0.3",
-  "description": "Library to enable image cropping",
+  "version": "1.5.1",
+  "description": "Library to enable image cropping on a overlay",
   "main": "js-crop.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,7 +13,7 @@
   "keywords": [
     "crop",
     "image-crop",
-     "vanilla-js-cropping"
+    "vanilla-js-cropping"
   ],
   "author": "ujw0l",
   "license": "MIT",
