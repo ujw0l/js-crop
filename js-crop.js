@@ -19,10 +19,6 @@ class jsCrop {
     }
 
     createOverlay(e) {
-
-        let overlayWidth = window.innerWidth > window.screen.width ? window.innerWidth : window.screen.width;
-        let overlayHeight = window.innerHeight > window.screen.height ? window.innerHeight : window.screen.height;
-
         let orgImage = new Image();
         orgImage.src = e.target.src;
         let imgActHeight = orgImage.height;
@@ -35,7 +31,7 @@ class jsCrop {
 
         let overlayDivEl = document.createElement("div");
         overlayDivEl.id = "js-crop-overlay";
-        overlayDivEl.style = `top:0%;left:0%;right:0%;bottom:0%;height:100%;width:100%;background-color:rgba(0,0,0,1);z-index:100000;`;
+        overlayDivEl.style = `transition: 0.8s ease-in-out;top:0%;left:0%;right:0%;bottom:0%;height:100%;width:100%;background-color:rgba(0,0,0,1);z-index:100000;`;
         document.body.insertBefore(overlayDivEl, document.body.firstChild);
 
         let jsCropCloseBtn = document.createElement('span');
@@ -54,7 +50,7 @@ class jsCrop {
         orgImage.height = opImgDim.height;
         orgImage.width = opImgDim.width;
         orgImage.setAttribute('draggable', 'false');
-        orgImage.setAttribute('data-dim-ratio', `${imgActWidth/opImgDim.width},${imgActHeight/opImgDim.height}`);
+        orgImage.setAttribute('data-dim-ratio', `${imgActWidth / opImgDim.width},${imgActHeight / opImgDim.height}`);
         overlayDiv.appendChild(jsCropCloseBtn);
         overlayDiv.appendChild(orgImage);
 
@@ -71,22 +67,23 @@ class jsCrop {
         let loadedImg = document.querySelector('#js-crop-image');
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let toolbarDiv = document.querySelector('#js-crop-toolbar');
-        let imgActHeight = loadedImg.getAttribute('height');
-        let imgActWidth = loadedImg.getAttribute('width');
+        let bufferImg = new Image();
+        bufferImg.src = loadedImg.src;
+        let imgActHeight = bufferImg.height;
+        let imgActWidth = bufferImg.width;
 
         var opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, imgActWidth, imgActHeight);
 
-        loadedImg.style.height = opImgDim.height + 'px';
-        loadedImg.style.width = opImgDim.width + 'px';
-
-        loadedImg.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)  }px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
+        loadedImg.height = opImgDim.height
+        loadedImg.width = opImgDim.width;
+        loadedImg.style.margin = `${(((overlayDiv.offsetHeight - opImgDim.height) / 2))}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
 
         let toolbarOpts = Array.from(toolbarDiv.querySelectorAll('div'));
 
-        toolbarDiv.style.paddingTop = ((toolbarDiv.offsetHeight - (toolbarOpts.length * toolbarDiv.offsetWidth)) / 3.2) + 'px';
+        toolbarDiv.style.paddingTop = ((overlayDiv.offsetHeight - (toolbarOpts.length * toolbarDiv.offsetWidth)) / 2) + 'px';
         toolbarOpts.map(x => {
             x.style.height = x.offsetWidth - 5 + 'px';
-            x.style.fontSize = (0.80 * x.offsetWidth) + 'px';
+            x.style.fontSize = (0.70 * x.offsetWidth) + 'px';
         });
     }
 
@@ -94,10 +91,10 @@ class jsCrop {
 
         let toolbar = document.createElement('div');
         toolbar.id = `js-crop-toolbar`;
-        toolbar.style = `padding:2px;padding-top:13%;color:rgba(255,255,255,1);display:inline-block;width:5%;height:100%;position:absolute;float:right;right:0;background-color:rgba(255,255,255,1);`;
+        toolbar.style = `transition: 0.8s ease-in-out;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:5%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:rgba(255,255,255,1);`;
         overlayDiv.appendChild(toolbar);
 
-        let spanStyle = `opacity:0;transition: 0.8s ease-in-out;font-size:300%;cursor:pointer;border-radius:0%;margin-bottom:3px;padding-bottom:3px;background-color:rgba(0,0,0,1);box-shadow:-1px -1px 10px rgba(0,0,0,1);text-align:center;width:98%;height:${toolbar.offsetWidth-6}px;border:1px solid rgba(0,0,0,1);`;
+        let spanStyle = `opacity:0;transition: 0.8s ease-in-out;font-size:300%;cursor:pointer;border-radius:0%;margin-bottom:3px;background-color:rgba(0,0,0,1);box-shadow:-1px -1px 10px rgba(0,0,0,1);text-align:center;width:98%;height:${toolbar.offsetWidth - 6}px;border:1px solid rgba(0,0,0,1);`;
         let spanMouseenter = `this.style.boxShadow ='-2px -2px 10px rgba(0,0,0,1)'; this.style.borderRadius='20%'`;
         let spanMouseleave = `this.style.boxShadow ='-1px -1px 1px rgba(0,0,0,1)';this.style.borderRadius='25%'`;
 
@@ -155,14 +152,19 @@ class jsCrop {
         saveImgDiv.addEventListener('click', event => this.downloadCurrentImg());
         toolbar.appendChild(saveImgDiv);
 
-        let appendAnim = Array.from(document.querySelector('#js-crop-toolbar').querySelectorAll('div'));
+        let toolbarDiv = document.querySelector('#js-crop-toolbar');
+        let toolbarOpts = Array.from(toolbarDiv.querySelectorAll('div'));;
 
-        appendAnim.map((x, i) => {
+        toolbarDiv.style.paddingTop = ((overlayDiv.offsetHeight - (toolbarOpts.length * toolbarDiv.offsetWidth)) / 2) + 'px'
+
+
+        toolbarOpts.map((x, i) => {
             setTimeout(() => {
+
                 x.style.height = x.offsetWidth - 5 + 'px';
                 x.style.opacity = '1';
                 x.style.boxShadow = '-1px -1px 1px rgba(0,0,0,1)';
-                x.style.fontSize = (0.80 * x.offsetWidth) + 'px';
+                x.style.fontSize = (0.70 * x.offsetWidth) + 'px';
                 x.style.borderRadius = '25%';
             }, (150 * i))
         });
@@ -181,9 +183,14 @@ class jsCrop {
 
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let imgEl = document.querySelector('#js-crop-image');
-        let imgDimension = e.target.getAttribute('data-img-dimension').split(',');
-        let imgHeight = parseFloat(imgDimension[0]);
-        let imgWidth = parseFloat(imgDimension[1]);
+        let bufferImg = new Image();
+        bufferImg.src = e.target.getAttribute('data-img-src');
+
+        let imgActHeight = bufferImg.height;
+        let imgActWidth = bufferImg.width
+
+        var opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, imgActWidth, imgActHeight);
+
 
         if (e.target.getAttribute('data-img-src') != imgEl.src) {
             document.querySelector('#previous-step').setAttribute('data-img-src', '')
@@ -193,9 +200,9 @@ class jsCrop {
             nextStep.setAttribute('data-dim-ratio', '1,1');
         }
 
-        imgEl.style.margin = `${((overlayDiv.offsetHeight - imgHeight) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - imgWidth) / 2)}px`;
-        imgEl.height = imgHeight;
-        imgEl.width = imgWidth;
+        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
+        imgEl.height = opImgDim.height;
+        imgEl.width = opImgDim.width;
         imgEl.setAttribute('data-dim-ratio', e.target.getAttribute('data-dim-ratio'));
         imgEl.src = e.target.getAttribute('data-img-src');
 
@@ -220,7 +227,7 @@ class jsCrop {
                 let imgWidth = parseFloat(imgDimension[1]);
 
                 setTimeout(() => {
-                    imgEl.style.margin = `${((overlayDiv.offsetHeight - imgHeight) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - imgWidth) / 2)}px`;
+                    imgEl.style.margin = `${(((overlayDiv.offsetHeight - imgHeight) / 2) - 38)}px ${(((0.94 * overlayDiv.offsetWidth) - imgWidth) / 2)}px`;
                     imgEl.height = imgHeight;
                     imgEl.width = imgWidth;
                     imgEl.src = e.target.getAttribute('data-img-src');
@@ -232,18 +239,17 @@ class jsCrop {
 
 
     restoreNextCrop(e) {
-        if (0 !== e.target.getAttribute('data-img-src').length) {
+        if (null != e.target.getAttribute('data-img-src') && 0 !== e.target.getAttribute('data-img-src').length) {
             let overlayDiv = document.querySelector('#js-crop-overlay');
             let imgEl = document.querySelector('#js-crop-image');
             let imgDimension = e.target.getAttribute('data-img-dimension').split(',');
             let imgHeight = parseFloat(imgDimension[0]);
             let imgWidth = parseFloat(imgDimension[1]);
-            imgEl.style.margin = `${(( (overlayDiv.offsetHeight - imgHeight) / 2)-38 )}px ${(((0.94 * overlayDiv.offsetWidth) - imgWidth) / 2)}px`;
+            imgEl.style.margin = `${(((overlayDiv.offsetHeight - imgHeight) / 2) - 38)}px ${(((0.94 * overlayDiv.offsetWidth) - imgWidth) / 2)}px`;
             imgEl.height = imgHeight;
             imgEl.width = imgWidth;
             imgEl.src = e.target.getAttribute('data-img-src');
         }
-
     }
 
     downloadCurrentImg() {
@@ -289,7 +295,7 @@ class jsCrop {
             let imgWdRatio = parseFloat(origImgRatio[0]);
             let cropImgWd = cropRect.offsetWidth * imgWdRatio;
             let cropImgHt = cropRect.offsetHeight * imgHtRatio;
-            cropImg.style.margin = `${(((overlayDiv.offsetHeight - cropRect.offsetHeight) / 2)-38 )}px ${(((0.94 * overlayDiv.offsetWidth) - cropRect.offsetWidth) / 2)}px`;
+            cropImg.style.margin = `${(((overlayDiv.offsetHeight - cropRect.offsetHeight) / 2) - 38)}px ${(((0.94 * overlayDiv.offsetWidth) - cropRect.offsetWidth) / 2)}px`;
 
             tempCanv.height = cropRect.offsetHeight;
             tempCanv.width = cropRect.offsetWidth;
@@ -338,58 +344,60 @@ class jsCrop {
 
     getOptimizedImageSize(screenWidth, screenHeight, imageActualWidth, imageActualHeight) {
 
-        var imageScreenHeightRatio = 0;
-        var imageScreenWidthRatio = 0;
-        var optimizedImageHeight = 0;
-        var optimizedImageWidth = 0;
+        var imageScreenHeightRatio = 0,
+            imageScreenWidthRatio = 0,
+            optimizedImageHeight = 0,
+            optimizedImageWidth = 0;
+        var imgPercent = 0.90,
+            marginPercent = 0.1;
 
         if ((imageActualWidth >= screenWidth) && (imageActualHeight >= screenHeight)) {
             if (imageActualWidth >= imageActualHeight) {
                 if (imageActualWidth > imageActualHeight) {
 
                     imageScreenWidthRatio = imageActualWidth / screenWidth;
-                    optimizedImageWidth = (imageActualWidth / imageScreenWidthRatio) - (0.09 * screenWidth);
+                    optimizedImageWidth = (imageActualWidth / imageScreenWidthRatio) - (marginPercent * screenWidth);
                     optimizedImageHeight = imageActualHeight * (optimizedImageWidth / imageActualWidth);
-                    if (optimizedImageHeight >= (0.91 * screenHeight)) {
+                    if (optimizedImageHeight >= (imgPercent * screenHeight)) {
                         imageScreenHeightRatio = screenHeight / imageActualHeight;
-                        optimizedImageHeight = imageActualHeight * imageScreenHeightRatio - (0.09 * screenHeight);
+                        optimizedImageHeight = imageActualHeight * imageScreenHeightRatio - (marginPercent * screenHeight);
                         optimizedImageWidth = imageActualWidth * (optimizedImageHeight / imageActualHeight);
                     }
                 } else {
 
                     if (screenWidth > screenHeight) {
-                        optimizedImageHeight = (0.91 * screenHeight);
+                        optimizedImageHeight = (imgPercent * screenHeight);
                         optimizedImageWidth = optimizedImageHeight;
 
                     } else if (screenHeight > screenWidth) {
-                        optimizedImageWidth = (0.91 * screenWidth);
+                        optimizedImageWidth = (imgPercent * screenWidth);
                         optimizedImageHeight = optimizedImageWidth;
 
                     } else {
                         imageScreenHeightRatio = screenHeight / imageActualHeight;
-                        optimizedImageHeight = imageActualHeight * imageScreenHeightRatio - (0.09 * screenHeight);
+                        optimizedImageHeight = imageActualHeight * imageScreenHeightRatio - (marginPercent * screenHeight);
                         optimizedImageWidth = imageActualWidth * (optimizedImageHeight / imageActualHeight);
                     }
                 }
 
             } else {
                 imageScreenHeightRatio = imageActualHeight / screenHeight;
-                optimizedImageHeight = (imageActualHeight / imageScreenHeightRatio) - (0.09 * screenHeight);
+                optimizedImageHeight = (imageActualHeight / imageScreenHeightRatio) - (marginPercent * screenHeight);
                 optimizedImageWidth = imageActualWidth * (optimizedImageHeight / imageActualHeight);
             }
 
         } else if (imageActualWidth >= screenWidth && imageActualHeight < screenHeight) {
             imageScreenWidthRatio = screenWidth / imageActualWidth;
-            optimizedImageWidth = imageActualWidth * imageScreenWidthRatio - (0.09 * screenWidth);
+            optimizedImageWidth = imageActualWidth * imageScreenWidthRatio - (marginPercent * screenWidth);
             optimizedImageHeight = imageActualHeight * (optimizedImageWidth / imageActualWidth);
         } else if (imageActualHeight >= screenHeight && imageActualWidth < screenWidth) {
             imageScreenHeightRatio = screenHeight / imageActualHeight;
-            optimizedImageHeight = imageActualHeight * imageScreenHeightRatio - (0.09 * screenHeight);
+            optimizedImageHeight = imageActualHeight * imageScreenHeightRatio - (marginPercent * screenHeight);
             optimizedImageWidth = imageActualWidth * (optimizedImageHeight / imageActualHeight);
             optimizedImageHeight = imageActualHeight * (optimizedImageWidth / imageActualWidth);
         } else {
-            var avilableImageWidth = 0.92 * screenWidth;
-            var avilableImageHeight = 0.92 * screenHeight;
+            var avilableImageWidth = imgPercent * screenWidth;
+            var avilableImageHeight = imgPercent * screenHeight;
             if (imageActualWidth >= avilableImageWidth && imageActualHeight >= avilableImageHeight) {
                 var imageAvilableWidthRatio = avilableWidth / imageActualWidth;
                 imageAvilableHeightRatio = avilableHeight / imageActualHeight;
@@ -412,8 +420,8 @@ class jsCrop {
 
 
         //at last check it optimized width is still large			
-        if (optimizedImageWidth > (0.91 * screenWidth)) {
-            optimizedImageWidth = 0.91 * screenWidth;
+        if (optimizedImageWidth > (imgPercent * screenWidth)) {
+            optimizedImageWidth = imgPercent * screenWidth;
             optimizedImageHeight = imageActualHeight * (optimizedImageWidth / imageActualWidth);
         }
 
