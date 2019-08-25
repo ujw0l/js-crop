@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Js Crop 👋</h1>
 <p>
-  <img src="https://img.shields.io/badge/version-1.5.1-blue.svg?cacheSeconds=2592000" />
+  <img src="https://img.shields.io/badge/version-1.6.0-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/ujw0l/js-crop#readme">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" target="_blank" />
   </a>
@@ -30,9 +30,20 @@ include js-crop.js
 
 ```sh
 
- new jsCrop('selector');
+ new jsCrop('selector',
+            { 
+              extButton : (extension which adds button to bottom of toolbar)
+                        { 
+                          buttonText : string, (optional, text for button)
+                          buttonTitle: string, (optinal, title for button)
+                          callBack: function, (required, callback function  which is passed blob of cropped image, on button click )
+                        },
+              saveButton:boolean (optional, set false to hide save button)
+  }
+  );
 
-*selector for images to be cropped, one or multiple
+*parameter 1 (required) : selector for images to be cropped, one or multiple
+*parameter 2 (optional): object with option to display extension button (extButton) and hide save button
 ```
 
 ## Contributing
