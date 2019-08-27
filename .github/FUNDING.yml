@@ -1,6 +1,4 @@
-# These are supported funding model platforms
-
-github: ujw0l
+github: [ujw0l]
 patreon: ujw0l
 tidelift: npm/js-crop
 
