@@ -12,15 +12,35 @@ class jsCrop {
     constructor(sel,param2) {
         let elList = Array.from(document.querySelectorAll(sel));
         elList.forEach((el) => {
-            el.addEventListener('click', event => this.createOverlay(event,param2));
+            if(undefined != el.type && 'file' == el.type ){
+                el.addEventListener('change', event=> {
+                    let img = event.target.files[0];
+                    if(undefined != img){
+                        if(FileReader){
+                            const reader = new FileReader();
+                            reader.addEventListener("load", event => {
+                                                                    var uploadImg = new Image();
+                                                                    uploadImg.src = event.target.result
+                                                                    uploadImg.addEventListener('load', event => this. createOverlay(event.target, param2 ));
+                            });
+                            reader.readAsDataURL(img);
+                        } 
+                    }
+                }
+                    );
+            } else{
+                el.addEventListener('click', event => event.target.addEventListener('load', this.createOverlay(event.target,param2)));
+            } 
         });
 
         window.addEventListener('resize', () => this.adjustApp());
     }
 
-    createOverlay(e,param2) {
+
+    createOverlay(img,param2) {
         let orgImage = new Image();
-        orgImage.src = e.target.src;
+        orgImage.src = img.src;
+
         let imgActHeight = orgImage.height;
         let imgActWidth = orgImage.width;
 
@@ -90,8 +110,8 @@ class jsCrop {
 
         if(undefined != document.querySelector('#cropRect')){
             document.querySelector('#js-crop-overlay').removeChild(document.querySelector('#js-crop-overlay').querySelector('#cropRect'));
-            document.querySelector('#start-crop').innerHTML = '&#9986;';
-            document.querySelector('#start-crop').title = `Start cropping`;
+            document.querySelector('#start-crop').innerHTML = '&#9744;';
+            document.querySelector('#start-crop').title = `Select area`;
             document.querySelector('#js-crop-image').setAttribute('data-crop-status','in-active');
             document.querySelector('#js-crop-image').removeAttribute('data-start-co');
          }
@@ -110,24 +130,25 @@ class jsCrop {
 
         let cropIconDiv = document.createElement('div');
         cropIconDiv.id = `start-crop`;
-        cropIconDiv.title = `Start cropping`;
+        cropIconDiv.title = `Select area`;
         cropIconDiv.style = spanStyle;
         cropIconDiv.setAttribute('onmouseenter', spanMouseenter);
         cropIconDiv.setAttribute('onmouseleave', spanMouseleave);
-        cropIconDiv.innerHTML = '&#9986;';
+        cropIconDiv.innerHTML = '&#9744;';
         cropIconDiv.addEventListener('click', () => this.addCropEventListener(event));
         toolbar.appendChild(cropIconDiv);
 
+        
         let revertDiv = document.createElement('div');
         revertDiv.id = `revert-to-original`;
-        revertDiv.title = `Revert to original Image`;
+        revertDiv.title = `Revert to original image`;
         revertDiv.setAttribute('data-img-src', imgSrc);
         revertDiv.setAttribute('data-img-dimension', imgDim.height + ',' + imgDim.width);
         revertDiv.setAttribute('data-dim-ratio', imgDim.dimRatio);
         revertDiv.setAttribute('onmouseenter', spanMouseenter);
         revertDiv.setAttribute('onmouseleave', spanMouseleave);
         revertDiv.style = spanStyle;
-        revertDiv.innerHTML = '&#10226;';
+        revertDiv.innerHTML = '&#8634;';
         revertDiv.addEventListener('click', event => this.revertToOriginal(event));
         toolbar.appendChild(revertDiv);
 
@@ -218,8 +239,8 @@ if(undefined != param2 && 0 !== param2.length ){
                     if(undefined != document.querySelector('#cropRect')){
                         document.querySelector('#js-crop-overlay').removeChild(document.querySelector('#js-crop-overlay').querySelector('#cropRect'));
                      }
-                     document.querySelector('#start-crop').innerHTML = '&#9986;';
-                     document.querySelector('#start-crop').title = `Start cropping`;
+                     document.querySelector('#start-crop').innerHTML = '&#9744;';
+                     document.querySelector('#start-crop').title = `Select area`;
                      document.querySelector('#js-crop-image').setAttribute('data-crop-status','in-active');
                      document.querySelector('#js-crop-image').removeAttribute('data-start-co');
                    }  
@@ -228,24 +249,24 @@ if(undefined != param2 && 0 !== param2.length ){
         });
     }
 
-
     addCropEventListener(e) {
         let imgEl =  document.querySelector('#js-crop-image');
         if('in-active' === imgEl.getAttribute('data-crop-status') ){
             imgEl.style.cursor = 'crosshair';
+
             imgEl.setAttribute('data-crop-status', `active`);
             imgEl.addEventListener("mousedown", event => {
                                                             event.target.setAttribute('data-start-co', `${event.offsetX},${event.offsetY}`);
                                                             event.target.addEventListener('mousemove', event => this.createCropBox(event));
             });
 
-            e.target.innerHTML = 'Ok';
-            e.target.title = 'Ok Crop'; 
+            e.target.innerHTML = '&#9986;';
+            e.target.title = 'Crop'; 
 
         } else if ('crop-ready' === imgEl.getAttribute('data-crop-status')){
             this.endCrop();
-            e.target.innerHTML = '&#9986;';
-            e.target.title = `Start cropping`;
+            e.target.innerHTML = '&#9744;';
+            e.target.title = `Select area`;
             imgEl.setAttribute('data-crop-status', `in-active`);
         }
         document.querySelector('#js-crop-overlay').addEventListener('mouseup', (event) =>   {if('start-crop' != event.target.id){document.querySelector('#js-crop-image').setAttribute('data-crop-status','crop-ready')} });
@@ -351,6 +372,7 @@ if(undefined != param2 && 0 !== param2.length ){
             let overlayDiv = document.querySelector('#js-crop-overlay');
             let prevCrop = document.querySelector('#previous-step');
             cropImg .style.cursor = '';
+            cropRect.style.cursor = '';
             prevCrop.setAttribute('data-img-src', cropImg.src);
             prevCrop.setAttribute('data-img-dimension', cropImg.height + ',' + cropImg.width);
             prevCrop.addEventListener('click', event => this.restorePreviousCrop(event));
