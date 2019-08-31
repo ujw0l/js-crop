@@ -50,15 +50,16 @@ class jsCrop {
 
 
         let overlayDivEl = document.createElement("div");
+        let overlayBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.overlayBgColor ? param2.customColor.overlayBgColor: 'rgba(0,0,0,1)';
         overlayDivEl.id = "js-crop-overlay";
-        overlayDivEl.style = `transition: 0.8s ease-in-out;top:0%;left:0%;right:0%;bottom:0%;height:100%;width:100%;background-color:rgba(0,0,0,1);z-index:100000;`;
+        overlayDivEl.style = `transition: 0.8s ease-in-out;top:0%;left:0%;right:0%;bottom:0%;height:100%;width:100%;background-color:${overlayBgColor};z-index:100000;`;
         document.body.insertBefore(overlayDivEl, document.body.firstChild);
 
         let jsCropCloseBtn = document.createElement('span');
         jsCropCloseBtn.id = "js-crop-close-btn";
         jsCropCloseBtn.title = "Close";
         jsCropCloseBtn.innerHTML = "&#10539;";
-        jsCropCloseBtn.style = `cursor:pointer;position:absolute;left:3px;font-size:20px;height:20px;width:20px;color:rgba(255,255,255,1);`;
+        jsCropCloseBtn.style = `cursor:pointer;position:absolute;left:3px;font-size:20px;height:20px;width:20px;color:rgba(255,255,255,1);text-shadow:-1px -1px 1px rgba(0,0,0,1);`;
 
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, imgActWidth, imgActHeight);
@@ -120,20 +121,23 @@ class jsCrop {
     createToolbar(overlayDiv, imgSrc, imgDim,param2) {
 
         let toolbar = document.createElement('div');
+        let toolbarBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.toolbarBgColor ? param2.customColor.toolbarBgColor: 'rgba(255,255,255,1)';
         toolbar.id = `js-crop-toolbar`;
-        toolbar.style = `transition: 0.8s ease-in-out;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:5%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:rgba(255,255,255,1);`;
+        toolbar.style = `transition: 0.8s ease-in-out;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:5%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:${toolbarBgColor};`;
         overlayDiv.appendChild(toolbar);
 
-        let spanStyle = `opacity:0;transition: 0.8s ease-in-out;font-size:300%;cursor:pointer;border-radius:0%;margin-bottom:3px;background-color:rgba(0,0,0,1);box-shadow:-1px -1px 10px rgba(0,0,0,1);text-align:center;width:98%;height:${toolbar.offsetWidth - 6}px;border:1px solid rgba(0,0,0,1);`;
-        let spanMouseenter = `this.style.boxShadow ='-2px -2px 10px rgba(0,0,0,1)'; this.style.borderRadius='20%'`;
-        let spanMouseleave = `this.style.boxShadow ='-1px -1px 1px rgba(0,0,0,1)';this.style.borderRadius='25%'`;
+        let btnFontColor = undefined != param2 && undefined != param2.customColor && undefined != param2.customColor.buttonFontColor ? param2.customColor.buttonFontColor : 'rgba(255,255,255,1)';
+        let btnBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.buttonBgColor ? param2.customColor.buttonBgColor: 'rgba(0,0,0,1)';
+        let btnStyle = `color:${btnFontColor};opacity:0;transition: 0.8s ease-in-out;font-size:300%;cursor:pointer;border-radius:0%;margin-bottom:3px;background-color:${btnBgColor};text-align:center;width:98%;height:${toolbar.offsetWidth - 6}px;border:1px solid ${btnBgColor};box-shadow:-1px -1px 10px ${btnBgColor};`;
+        let btnMouseenter = `this.style.boxShadow ='-2px -2px 10px ${btnBgColor}'; this.style.borderRadius='20%'`;
+        let btnMouseleave = `this.style.boxShadow ='-1px -1px 1px ${btnBgColor}';this.style.borderRadius='25%'`;
 
         let cropIconDiv = document.createElement('div');
         cropIconDiv.id = `start-crop`;
         cropIconDiv.title = `Select area`;
-        cropIconDiv.style = spanStyle;
-        cropIconDiv.setAttribute('onmouseenter', spanMouseenter);
-        cropIconDiv.setAttribute('onmouseleave', spanMouseleave);
+        cropIconDiv.style = btnStyle;
+        cropIconDiv.setAttribute('onmouseenter', btnMouseenter);
+        cropIconDiv.setAttribute('onmouseleave', btnMouseleave);
         cropIconDiv.innerHTML = '&#9744;';
         cropIconDiv.addEventListener('click', () => this.addCropEventListener(event));
         toolbar.appendChild(cropIconDiv);
@@ -145,9 +149,9 @@ class jsCrop {
         revertDiv.setAttribute('data-img-src', imgSrc);
         revertDiv.setAttribute('data-img-dimension', imgDim.height + ',' + imgDim.width);
         revertDiv.setAttribute('data-dim-ratio', imgDim.dimRatio);
-        revertDiv.setAttribute('onmouseenter', spanMouseenter);
-        revertDiv.setAttribute('onmouseleave', spanMouseleave);
-        revertDiv.style = spanStyle;
+        revertDiv.setAttribute('onmouseenter', btnMouseenter);
+        revertDiv.setAttribute('onmouseleave', btnMouseleave);
+        revertDiv.style = btnStyle;
         revertDiv.innerHTML = '&#8634;';
         revertDiv.addEventListener('click', event => this.revertToOriginal(event));
         toolbar.appendChild(revertDiv);
@@ -155,10 +159,10 @@ class jsCrop {
         let prevStepDiv = document.createElement('div');
         prevStepDiv.id = `previous-step`;
         prevStepDiv.title = `Revert to previous crop`;
-        prevStepDiv.style = spanStyle;
+        prevStepDiv.style = btnStyle;
         prevStepDiv.setAttribute('data-img-src', '');
-        prevStepDiv.setAttribute('onmouseenter', spanMouseenter);
-        prevStepDiv.setAttribute('onmouseleave', spanMouseleave);
+        prevStepDiv.setAttribute('onmouseenter', btnMouseenter);
+        prevStepDiv.setAttribute('onmouseleave', btnMouseleave);
         prevStepDiv.innerHTML = '&#10550;';
         prevStepDiv.addEventListener('click', event => this.restorePreviousCrop(event));
         toolbar.appendChild(prevStepDiv);
@@ -166,9 +170,9 @@ class jsCrop {
         let nextStepDiv = document.createElement('div');
         nextStepDiv.id = `next-step`;
         nextStepDiv.title = `Restore last crop`;
-        nextStepDiv.style = spanStyle;
-        nextStepDiv.setAttribute('onmouseenter', spanMouseenter);
-        nextStepDiv.setAttribute('onmouseleave', spanMouseleave);
+        nextStepDiv.style = btnStyle;
+        nextStepDiv.setAttribute('onmouseenter', btnMouseenter);
+        nextStepDiv.setAttribute('onmouseleave', btnMouseleave);
         nextStepDiv.innerHTML = '&#10551;';
         nextStepDiv.addEventListener('click', event => this.restoreNextCrop(event));
         toolbar.appendChild(nextStepDiv);
@@ -181,9 +185,9 @@ if(undefined != param2 && 0 !== param2.length ){
                 let saveImgDiv = document.createElement('div');
                 saveImgDiv.id = `save-image`;
                 saveImgDiv.title = `Save Image`;
-                saveImgDiv.style = spanStyle;
-                saveImgDiv.setAttribute('onmouseenter', spanMouseenter);
-                saveImgDiv.setAttribute('onmouseleave', spanMouseleave);
+                saveImgDiv.style = btnStyle;
+                saveImgDiv.setAttribute('onmouseenter', btnMouseenter);
+                saveImgDiv.setAttribute('onmouseleave', btnMouseleave);
                 saveImgDiv.innerHTML = '&#10515;';
                 saveImgDiv.addEventListener('click',()=>{
                                                             let downloadLink = document.createElement('a');
@@ -197,9 +201,9 @@ if(undefined != param2 && 0 !== param2.length ){
             if(undefined != param2.extButton  && 0 !== param2.extButton.length && 'function' == typeof(param2.extButton.callBack)){ 
                 let extBtnDiv = document.createElement('div');
                 extBtnDiv.id = `ext-button`;
-                extBtnDiv.style = spanStyle;
-                extBtnDiv.setAttribute('onmouseenter', spanMouseenter);
-                extBtnDiv.setAttribute('onmouseleave', spanMouseleave);
+                extBtnDiv.style = btnStyle;
+                extBtnDiv.setAttribute('onmouseenter', btnMouseenter);
+                extBtnDiv.setAttribute('onmouseleave', btnMouseleave);
                 extBtnDiv.title = param2.extButton.buttonTitle ? param2.extButton.buttonTitle: 'Extension';
                 extBtnDiv.innerHTML = param2.extButton.buttonText ? param2.extButton.buttonText: 'ext';
                 extBtnDiv.addEventListener('click', ()=>param2.extButton.callBack(this.currentImgToBlob()));
@@ -209,9 +213,9 @@ if(undefined != param2 && 0 !== param2.length ){
     let saveImgDiv = document.createElement('div');
         saveImgDiv.id = `save-image`;
         saveImgDiv.title = `Save Image`;
-        saveImgDiv.style = spanStyle;
-        saveImgDiv.setAttribute('onmouseenter', spanMouseenter);
-        saveImgDiv.setAttribute('onmouseleave', spanMouseleave);
+        saveImgDiv.style = btnStyle;
+        saveImgDiv.setAttribute('onmouseenter', btnMouseenter);
+        saveImgDiv.setAttribute('onmouseleave', btnMouseleave);
         saveImgDiv.innerHTML = '&#10515;';
         saveImgDiv.addEventListener('click',()=>{
                                                     let downloadLink = document.createElement('a');
@@ -231,7 +235,7 @@ if(undefined != param2 && 0 !== param2.length ){
             setTimeout(() => {
                 x.style.height = x.offsetWidth - 5 + 'px';
                 x.style.opacity = '1';
-                x.style.boxShadow = '-1px -1px 1px rgba(0,0,0,1)';
+                x.style.boxShadow = `-1px -1px 1px ${btnBgColor}`;
                 x.style.fontSize = (0.70 * x.offsetWidth) + 'px';
                 x.style.borderRadius = '25%';
                 x.addEventListener('click',(event)=> {
@@ -411,7 +415,7 @@ if(undefined != param2 && 0 !== param2.length ){
                 if (undefined == cropRect) {
                     cropRect = document.createElement('canvas');
                     cropRect.id = 'cropRect';
-                    cropRect.style = `cursor:crosshair;position:absolute;border:0.5px solid rgba(255,255,255,1);box-shadow:0px 0px 10px rgba(0,0,0,1);left:${parseFloat(imgEl.style.marginLeft) + par.startX}px;top:${parseFloat(imgEl.style.marginTop) + par.startY}px;width:${par.width}px;height:${par.height}px;`;
+                    cropRect.style = `z-index:1001000;cursor:crosshair;position:absolute;border:1px dotted rgba(255,255,255,1);box-shadow:0px 0px 10px rgba(0,0,0,1);left:${parseFloat(imgEl.style.marginLeft) + par.startX}px;top:${parseFloat(imgEl.style.marginTop) + par.startY}px;width:${par.width}px;height:${par.height}px;`;
                     cropRect.setAttribute('data-start-xy', par.startX + ',' + par.startY);
                     imgEl.parentNode.insertBefore(cropRect, imgEl);
                 } else {

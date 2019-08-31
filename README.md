@@ -7,9 +7,14 @@
   <a href="https://github.com/ujw0l/js-crop/graphs/commit-activity">
     <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" target="_blank" />
   </a>
-  <a href="https://github.com/ujw0l/js-crop/blob/master/LICENSE">
-    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" target="_blank" />
+  <a href="https://tidelift.com/subscription/pkg/npm-js-crop?utm_source=npm-js-crop&utm_medium=referral&utm_campaign=readme">
+    <img alt="License: MIT" src="https://tidelift.com/badges/package/npm/js-crop" target="_blank" />
   </a>
+
+<a href="https://tidelift.com/subscription/pkg/npm-js-crop?utm_source=npm-js-crop&utm_medium=referral&utm_campaign=readme">
+    <img alt="License: MIT" src="https://tidelift.com/badges/package/npm/js-crop" target="_blank" />
+  </a>
+
 </p>
 
 > JS Library to enable image cropping
@@ -59,7 +64,19 @@ Contributions, issues and feature requests are welcome. Feel free to check [issu
 
 ## Show your support
 
-Please ⭐️ this repository if you like it.
+## Show your support
+
+Please ⭐️ this repository if this project helped you!
+<ul>
+<li>
+<a href="https://www.patreon.com/ujw0l">
+  <img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="160">
+</a>
+</li>
+<li>
+<a href="https://tidelift.com/subscription/pkg/npm-js-crop?utm_source=npm-js-crop&utm_medium=referral&utm_campaign=readme">Get supported js-crop with the Tidelift Subscription</a>
+</li>
+</ul>
 
 ## License
 
