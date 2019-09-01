@@ -63,8 +63,8 @@ class jsCrop {
 
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, imgActWidth, imgActHeight);
-        let imgStyle = `box-shadow:0px 0px 5px rgba(255,255,255,1);display:inline-block;margin:${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px;vertical-align:top;`;
-
+        let imgStyle = `box-shadow:0px 0px 5px rgba(255,255,255,1);display:inline-block;margin:${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.96 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px;vertical-align:top;`;
+     
 
         orgImage.id = "js-crop-image";
         orgImage.style = imgStyle;
@@ -89,23 +89,21 @@ class jsCrop {
         let loadedImg = document.querySelector('#js-crop-image');
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let toolbarDiv = document.querySelector('#js-crop-toolbar');
+       
+        let toolbarOpts = Array.from(toolbarDiv.querySelectorAll('div'));
+        toolbarDiv.style.height = overlayDiv.offsetHeight+'px';
+        toolbarDiv.style.paddingTop = ((overlayDiv.offsetHeight - (toolbarOpts.length * toolbarDiv.offsetWidth)) / 2) + 'px';
+       
+
         let bufferImg = new Image();
         bufferImg.src = loadedImg.src;
-        let imgActHeight = bufferImg.height;
-        let imgActWidth = bufferImg.width;
-
-        var opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, imgActWidth, imgActHeight);
-
+        var opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
         loadedImg.height = opImgDim.height
         loadedImg.width = opImgDim.width;
         loadedImg.style.margin = `${(((overlayDiv.offsetHeight - opImgDim.height) / 2))}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
 
-        let toolbarOpts = Array.from(toolbarDiv.querySelectorAll('div'));
-
-        toolbarDiv.style.paddingTop = ((overlayDiv.offsetHeight - (toolbarOpts.length * toolbarDiv.offsetWidth)) / 2) + 'px';
-        toolbarDiv.style.height = overlayDiv.offsetHeight+'px';
         toolbarOpts.map(x => {
-            x.style.height = x.offsetWidth - 5 + 'px';
+            x.style.height = x.offsetWidth + 'px';
             x.style.fontSize = (0.70 * x.offsetWidth) + 'px';
         });
 
@@ -123,7 +121,7 @@ class jsCrop {
         let toolbar = document.createElement('div');
         let toolbarBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.toolbarBgColor ? param2.customColor.toolbarBgColor: 'rgba(255,255,255,1)';
         toolbar.id = `js-crop-toolbar`;
-        toolbar.style = `transition: 0.8s ease-in-out;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:5%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:${toolbarBgColor};`;
+        toolbar.style = `tex-align:center;transition: 0.8s ease-in-out;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:4%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:${toolbarBgColor};`;
         overlayDiv.appendChild(toolbar);
 
         let btnFontColor = undefined != param2 && undefined != param2.customColor && undefined != param2.customColor.buttonFontColor ? param2.customColor.buttonFontColor : 'rgba(255,255,255,1)';
@@ -152,7 +150,7 @@ class jsCrop {
         revertDiv.setAttribute('onmouseenter', btnMouseenter);
         revertDiv.setAttribute('onmouseleave', btnMouseleave);
         revertDiv.style = btnStyle;
-        revertDiv.innerHTML = '&#8634;';
+        revertDiv.innerHTML = '&#8646;';
         revertDiv.addEventListener('click', event => this.revertToOriginal(event));
         toolbar.appendChild(revertDiv);
 
@@ -177,8 +175,7 @@ class jsCrop {
         nextStepDiv.addEventListener('click', event => this.restoreNextCrop(event));
         toolbar.appendChild(nextStepDiv);
 
-
-
+       
 if(undefined != param2 && 0 !== param2.length ){
 
             if(false !== param2.saveButton){
@@ -233,7 +230,7 @@ if(undefined != param2 && 0 !== param2.length ){
         toolbarDiv.style.paddingTop = ((overlayDiv.offsetHeight - (toolbarOpts.length * toolbarDiv.offsetWidth)) / 2) + 'px'
         toolbarOpts.map((x, i) => {
             setTimeout(() => {
-                x.style.height = x.offsetWidth - 5 + 'px';
+                x.style.height = x.offsetWidth  + 'px';
                 x.style.opacity = '1';
                 x.style.boxShadow = `-1px -1px 1px ${btnBgColor}`;
                 x.style.fontSize = (0.70 * x.offsetWidth) + 'px';
@@ -261,9 +258,9 @@ if(undefined != param2 && 0 !== param2.length ){
             imgEl.setAttribute('data-crop-status', `active`);
             imgEl.addEventListener("mousedown", event => {
                                                             event.target.setAttribute('data-start-co', `${event.offsetX},${event.offsetY}`);
+                                                            event.target.setAttribute('data-mouse-status','down');
                                                             event.target.addEventListener('mousemove', event => this.createCropBox(event));
             });
-
             e.target.innerHTML = '&#9986;';
             e.target.title = 'Crop'; 
 
@@ -273,7 +270,10 @@ if(undefined != param2 && 0 !== param2.length ){
             e.target.title = `Select area`;
             imgEl.setAttribute('data-crop-status', `in-active`);
         }
-        document.querySelector('#js-crop-overlay').addEventListener('mouseup', (event) =>   {if('start-crop' != event.target.id){document.querySelector('#js-crop-image').setAttribute('data-crop-status','crop-ready')} });
+        document.querySelector('#js-crop-overlay').addEventListener('mouseup', (event) =>   {if('start-crop' != event.target.id){
+            document.querySelector('#js-crop-image').setAttribute('data-crop-status','crop-ready')};
+            document.querySelector('#js-crop-image').setAttribute('data-mouse-status','up');
+        });
     }
 
     revertToOriginal(e) {
@@ -405,10 +405,9 @@ if(undefined != param2 && 0 !== param2.length ){
 
     }
 
-
     createCropBox(e) {
         var imgEl = document.querySelector("#js-crop-image");
-        if ('active' == imgEl.getAttribute('data-crop-status')) {
+        if ('in-active' != imgEl.getAttribute('data-crop-status') && 'down' == imgEl.getAttribute('data-mouse-status') ) {
             let par = this.setCanvasCo(e);
             if (undefined != par) {
                 let cropRect = document.querySelector('#cropRect');
