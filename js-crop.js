@@ -413,7 +413,7 @@ if(undefined != param2 && 0 !== param2.length ){
     }
 
     createCropBox(e) {
-        var imgEl = document.querySelector("#js-crop-image");
+        let imgEl = document.querySelector("#js-crop-image");
         if ('in-active' != imgEl.getAttribute('data-crop-status') && 'down' == imgEl.getAttribute('data-mouse-status')) {
             let par = this.setCanvasCo(e);
             if (undefined != par) {
@@ -424,6 +424,16 @@ if(undefined != param2 && 0 !== param2.length ){
                     cropRect.style = `z-index:1001000;cursor:crosshair;position:absolute;border:1px dotted rgba(255,255,255,1);box-shadow:0px 0px 10px rgba(0,0,0,1);left:${parseFloat(imgEl.style.marginLeft) + par.startX}px;top:${parseFloat(imgEl.style.marginTop) + par.startY}px;width:${par.width}px;height:${par.height}px;`;
                     cropRect.setAttribute('data-start-xy', par.startX + ',' + par.startY);
                     imgEl.parentNode.insertBefore(cropRect, imgEl);
+                    cropRect.addEventListener('mousedown', ()=>imgEl.setAttribute('data-mouse-status','down'));
+                    cropRect.addEventListener('mouseup', ()=>imgEl.setAttribute('data-mouse-status','up'));
+                    cropRect.addEventListener('mousemove',event => {
+                                                                    if('down' == imgEl.getAttribute('data-mouse-status')){
+                                                                        event.target.style.width =  event.offsetX+'px';
+                                                                        event.target.style.height = event.offsetY+'px';
+                                                                    }
+                                                                   
+                                                   
+                    });
                 } else {
                     cropRect.style.left = (parseFloat(imgEl.style.marginLeft) + par.startX) + 'px';
                     cropRect.style.top = (parseFloat(imgEl.style.marginTop) + par.startY) + 'px';
@@ -431,12 +441,14 @@ if(undefined != param2 && 0 !== param2.length ){
                     cropRect.style.width = par.width + 'px';
                     cropRect.setAttribute('data-start-xy', par.startX + ',' + par.startY);
                 }
-                imgEl.style.cursor = '';
             }
         }
     }
 
  
+
+       
+
 
 
     getOptimizedImageSize(screenWidth, screenHeight, imageActualWidth, imageActualHeight) {
