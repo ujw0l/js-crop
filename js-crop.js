@@ -40,7 +40,6 @@ class jsCrop {
     createOverlay(img,param2) {
         let orgImage = new Image();
         orgImage.src = img.src;
-
         let imgActHeight = orgImage.height;
         let imgActWidth = orgImage.width;
 
@@ -97,7 +96,7 @@ class jsCrop {
 
         let bufferImg = new Image();
         bufferImg.src = loadedImg.src;
-        var opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
+        let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
         loadedImg.height = opImgDim.height
         loadedImg.width = opImgDim.width;
         loadedImg.style.margin = `${(((overlayDiv.offsetHeight - opImgDim.height) / 2))}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
@@ -252,14 +251,15 @@ if(undefined != param2 && 0 !== param2.length ){
 
     addCropEventListener(e) {
         let imgEl =  document.querySelector('#js-crop-image');
+        imgEl.setAttribute('data-mouse-status','up');
         if('in-active' === imgEl.getAttribute('data-crop-status') ){
             imgEl.style.cursor = 'crosshair';
-
             imgEl.setAttribute('data-crop-status', `active`);
             imgEl.addEventListener("mousedown", event => {
-                                                            event.target.setAttribute('data-start-co', `${event.offsetX},${event.offsetY}`);
-                                                            event.target.setAttribute('data-mouse-status','down');
-                                                            event.target.addEventListener('mousemove', event => this.createCropBox(event));
+                                                                event.target.setAttribute('data-start-co', `${event.offsetX},${event.offsetY}`);
+                                                                event.target.setAttribute('data-mouse-status','down');
+                                                                event.target.addEventListener('mousemove', event => this.createCropBox(event));
+                                                            
             });
             e.target.innerHTML = '&#9986;';
             e.target.title = 'Crop'; 
@@ -270,11 +270,14 @@ if(undefined != param2 && 0 !== param2.length ){
             e.target.title = `Select area`;
             imgEl.setAttribute('data-crop-status', `in-active`);
         }
-        document.querySelector('#js-crop-overlay').addEventListener('mouseup', (event) =>   {if('start-crop' != event.target.id){
-            document.querySelector('#js-crop-image').setAttribute('data-crop-status','crop-ready')};
-            document.querySelector('#js-crop-image').setAttribute('data-mouse-status','up');
-        });
+        document.querySelector('#js-crop-overlay').addEventListener('mouseup',event =>   {
+                                                                                                if('start-crop' != event.target.id && 'in-active' != imgEl.getAttribute('data-crop-status')){
+                                                                                                        imgEl.setAttribute('data-crop-status','crop-ready');
+                                                                                                        imgEl.setAttribute('data-mouse-status','up');
+                                                                                         }
+                                                                    });
     }
+
 
     revertToOriginal(e) {
 
@@ -295,9 +298,11 @@ if(undefined != param2 && 0 !== param2.length ){
             nextStep.setAttribute('data-dim-ratio', '1,1');
         }
 
-        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
+        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.96 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
         imgEl.height = opImgDim.height;
         imgEl.width = opImgDim.width;
+        imgEl.setAttribute('data-crop-status','in-active');
+        imgEl.removeAttribute('data-mouse-status');
         imgEl.setAttribute('data-dim-ratio', e.target.getAttribute('data-dim-ratio'));
         imgEl.src = e.target.getAttribute('data-img-src');
     }
@@ -323,6 +328,7 @@ if(undefined != param2 && 0 !== param2.length ){
                     imgEl.style.margin = `${(((overlayDiv.offsetHeight - imgHeight) / 2) - 38)}px ${(((0.94 * overlayDiv.offsetWidth) - imgWidth) / 2)}px`;
                     imgEl.height = imgHeight;
                     imgEl.width = imgWidth;
+                    imgEl.setAttribute('data-crop-status','in-active');
                     imgEl.src = e.target.getAttribute('data-img-src');
                 }, 100);
             }
@@ -340,6 +346,7 @@ if(undefined != param2 && 0 !== param2.length ){
             imgEl.style.margin = `${(((overlayDiv.offsetHeight - imgHeight) / 2) - 38)}px ${(((0.94 * overlayDiv.offsetWidth) - imgWidth) / 2)}px`;
             imgEl.height = imgHeight;
             imgEl.width = imgWidth;
+            imgEl.setAttribute('data-crop-status','in-active');
             imgEl.src = e.target.getAttribute('data-img-src');
         }
     }
@@ -369,7 +376,7 @@ if(undefined != param2 && 0 !== param2.length ){
     endCrop() {
 
         let cropRect = document.querySelector('#cropRect');
-        if (undefined != cropRect) {
+        if (undefined != cropRect ) {
             let startCo = cropRect.getAttribute('data-start-xy').split(',');
             let cropImg = document.querySelector('#js-crop-image');
             let origImgRatio = cropImg.getAttribute('data-dim-ratio').split(',');
@@ -407,7 +414,7 @@ if(undefined != param2 && 0 !== param2.length ){
 
     createCropBox(e) {
         var imgEl = document.querySelector("#js-crop-image");
-        if ('in-active' != imgEl.getAttribute('data-crop-status') && 'down' == imgEl.getAttribute('data-mouse-status') ) {
+        if ('in-active' != imgEl.getAttribute('data-crop-status') && 'down' == imgEl.getAttribute('data-mouse-status')) {
             let par = this.setCanvasCo(e);
             if (undefined != par) {
                 let cropRect = document.querySelector('#cropRect');
