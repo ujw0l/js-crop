@@ -74,7 +74,9 @@ Please ⭐️ this repository if this project helped you!
 </a>
 </li>
 <li>
-<a href="https://tidelift.com/subscription/pkg/npm-js-crop?utm_source=npm-js-crop&utm_medium=referral&utm_campaign=readme">Get supported js-crop with the Tidelift Subscription</a>
+<a href="https://tidelift.com/subscription/pkg/npm-js-crop?utm_source=npm-js-crop&utm_medium=referral&utm_campaign=readme">
+<img src="https://cdn2.hubspot.net/hubfs/4008838/website/logos/Tidelift-shorthand.svg" width="78" height="30" />
+Get supported js-crop with the Tidelift Subscription</a>
 </li>
 </ul>
 
