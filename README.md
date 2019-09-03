@@ -17,7 +17,7 @@
 
 </p>
 
-> JS Library to enable image cropping with built in UI(with option for color customization)
+> JS Library to enable image cropping with built in UI(with color customization options to fit look and feel of you website/web app)
 
 ## Install
 
@@ -37,12 +37,20 @@ include js-crop.js
 
  new jsCrop('selector',
             { 
-              extButton : (extension which adds button to bottom of toolbar)
+              extButton : (optional,extension which adds button to bottom of toolbar)
                         { 
                           buttonText : string, (optional, text for button)
-                          buttonTitle: string, (optinal, title for button)
-                          callBack: function, (required, callback function  which is passed blob of cropped image, on button click )
+                          buttonTitle : string, (optinal, title for button)
+                          callBack : function, (required, callback function  which is passed blob of cropped image, on button click )
                         },
+               customColor : (Optional, Options for UI color customization)
+                        {  
+                            overlayBgColor : string, (optional, background color for overlay)
+                            toolbarBgColor : string, (optional, background color for toolbar)
+                            buttonBgColor :string,    (optional, background color for buttons)
+                            buttonFontColor : string, (optional, font color for button)
+                            
+                      },          
               saveButton:boolean (optional, set false to hide save button)
   }
   );
