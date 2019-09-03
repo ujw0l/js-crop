@@ -120,12 +120,12 @@ class jsCrop {
         let toolbar = document.createElement('div');
         let toolbarBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.toolbarBgColor ? param2.customColor.toolbarBgColor: 'rgba(255,255,255,1)';
         toolbar.id = `js-crop-toolbar`;
-        toolbar.style = `tex-align:center;transition: 0.8s ease-in-out;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:4%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:${toolbarBgColor};`;
+        toolbar.style = `tex-align:center;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:4%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:${toolbarBgColor};`;
         overlayDiv.appendChild(toolbar);
 
         let btnFontColor = undefined != param2 && undefined != param2.customColor && undefined != param2.customColor.buttonFontColor ? param2.customColor.buttonFontColor : 'rgba(255,255,255,1)';
         let btnBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.buttonBgColor ? param2.customColor.buttonBgColor: 'rgba(0,0,0,1)';
-        let btnStyle = `color:${btnFontColor};opacity:0;transition: 0.8s ease-in-out;font-size:300%;cursor:pointer;border-radius:0%;margin-bottom:3px;background-color:${btnBgColor};text-align:center;width:98%;height:${toolbar.offsetWidth - 6}px;border:1px solid ${btnBgColor};box-shadow:-1px -1px 10px ${btnBgColor};`;
+        let btnStyle = `color:${btnFontColor};opacity:0;font-size:300%;cursor:pointer;border-radius:0%;margin-bottom:3px;background-color:${btnBgColor};text-align:center;width:98%;height:${toolbar.offsetWidth - 6}px;border:1px solid ${btnBgColor};box-shadow:-1px -1px 10px ${btnBgColor};`;
         let btnMouseenter = `this.style.boxShadow ='-2px -2px 10px ${btnBgColor}'; this.style.borderRadius='20%'`;
         let btnMouseleave = `this.style.boxShadow ='-1px -1px 1px ${btnBgColor}';this.style.borderRadius='25%'`;
 
@@ -245,7 +245,7 @@ if(undefined != param2 && 0 !== param2.length ){
                      document.querySelector('#js-crop-image').removeAttribute('data-start-co');
                    }  
                 });
-            }, (150 * i))
+            }, (5 * i))
         });
     }
 
