@@ -70,6 +70,9 @@ class jsCrop {
         orgImage.height = opImgDim.height;
         orgImage.width = opImgDim.width;
         orgImage.setAttribute('data-crop-status','in-active');
+        orgImage.setAttribute('data-crop-step','0');
+        orgImage.setAttribute('data-crop-0',orgImage.src)
+        orgImage.setAttribute('data-crop-count','0')
         orgImage.setAttribute('draggable', 'false');
         orgImage.setAttribute('data-dim-ratio', `${imgActWidth / opImgDim.width},${imgActHeight / opImgDim.height}`);
         overlayDiv.appendChild(jsCropCloseBtn);
@@ -142,8 +145,7 @@ class jsCrop {
         
         let revertDiv = document.createElement('div');
         revertDiv.id = `revert-to-original`;
-        revertDiv.title = `Revert to original image`;
-        revertDiv.setAttribute('data-img-src', imgSrc);
+        revertDiv.title = `Revert to original Image`;
         revertDiv.setAttribute('data-img-dimension', imgDim.height + ',' + imgDim.width);
         revertDiv.setAttribute('data-dim-ratio', imgDim.dimRatio);
         revertDiv.setAttribute('onmouseenter', btnMouseenter);
@@ -157,7 +159,6 @@ class jsCrop {
         prevStepDiv.id = `previous-step`;
         prevStepDiv.title = `Revert to previous crop`;
         prevStepDiv.style = btnStyle;
-        prevStepDiv.setAttribute('data-img-src', '');
         prevStepDiv.setAttribute('onmouseenter', btnMouseenter);
         prevStepDiv.setAttribute('onmouseleave', btnMouseleave);
         prevStepDiv.innerHTML = '&#10550;';
@@ -283,71 +284,62 @@ if(undefined != param2 && 0 !== param2.length ){
 
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let imgEl = document.querySelector('#js-crop-image');
+        let cropStepCount = parseInt(imgEl.getAttribute('data-crop-count'));
         let bufferImg = new Image();
-        bufferImg.src = e.target.getAttribute('data-img-src');
-
-        let imgActHeight = bufferImg.height;
-        let imgActWidth = bufferImg.width
-        var opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, imgActWidth, imgActHeight);
-
-        if (e.target.getAttribute('data-img-src') != imgEl.src) {
-            document.querySelector('#previous-step').setAttribute('data-img-src', '')
-            let nextStep = document.querySelector('#next-step');
-            nextStep.setAttribute('data-img-src', imgEl.src);
-            nextStep.setAttribute('data-img-dimension', imgEl.height + ',' + imgEl.width);
-            nextStep.setAttribute('data-dim-ratio', '1,1');
-        }
-
-        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.96 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
+        bufferImg.src = imgEl .getAttribute('data-crop-0');
+        imgEl.setAttribute('data-crop-count','0');
+        imgEl.setAttribute('data-crop-step','0');
+        var opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
+        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
         imgEl.height = opImgDim.height;
         imgEl.width = opImgDim.width;
         imgEl.setAttribute('data-crop-status','in-active');
         imgEl.removeAttribute('data-mouse-status');
         imgEl.setAttribute('data-dim-ratio', e.target.getAttribute('data-dim-ratio'));
-        imgEl.src = e.target.getAttribute('data-img-src');
+        imgEl.src = imgEl.getAttribute('data-crop-0');
+        for(let i=1; i<=cropStepCount; i++){
+          imgEl.removeAttribute('data-crop-'+i);
+        }
     }
 
     restorePreviousCrop(e) {
-        if (0 !== e.target.getAttribute('data-img-src').length) {
-            let revertToOrig = document.querySelector('#revert-to-original');
-            if (revertToOrig.getAttribute('data-img-src') != e.target.getAttribute('data-img-src')) {
-
-                let overlayDiv = document.querySelector('#js-crop-overlay');
-                let nextStep = document.querySelector('#next-step');
-                let imgEl = document.querySelector('#js-crop-image');
-                let currentImgSrc = imgEl.src;
-                nextStep.setAttribute('data-img-src', currentImgSrc);
-                nextStep.setAttribute('data-img-dimension', imgEl.height + ',' + imgEl.width);
-                nextStep.setAttribute('data-dim-ratio', '1,1');
-
-                let imgDimension = e.target.getAttribute('data-img-dimension').split(',');
-                let imgHeight = parseFloat(imgDimension[0]);
-                let imgWidth = parseFloat(imgDimension[1]);
-
-                setTimeout(() => {
-                    imgEl.style.margin = `${(((overlayDiv.offsetHeight - imgHeight) / 2) - 38)}px ${(((0.94 * overlayDiv.offsetWidth) - imgWidth) / 2)}px`;
-                    imgEl.height = imgHeight;
-                    imgEl.width = imgWidth;
-                    imgEl.setAttribute('data-crop-status','in-active');
-                    imgEl.src = e.target.getAttribute('data-img-src');
-                }, 100);
-            }
+        let imgEl = document.querySelector('#js-crop-image');
+        let curCropStep = parseInt(imgEl.getAttribute('data-crop-step'));
+        if (1 < curCropStep ) {
+      
+                    let overlayDiv = document.querySelector('#js-crop-overlay');
+                    let bufferImg = new Image();
+                    bufferImg.src = imgEl .getAttribute('data-crop-'+(curCropStep-1));
+                    bufferImg.addEventListener('load', ()=>{
+                        let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
+                        imgEl.setAttribute('data-crop-step',(curCropStep-1));
+                        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
+                        imgEl.height = opImgDim.height;
+                        imgEl.width = opImgDim.width;
+                        imgEl.src = bufferImg.src
+                    });
         }
     }
 
 
     restoreNextCrop(e) {
-        if (null != e.target.getAttribute('data-img-src') && 0 !== e.target.getAttribute('data-img-src').length) {
-            let overlayDiv = document.querySelector('#js-crop-overlay');
-            let imgEl = document.querySelector('#js-crop-image');
-            let imgDimension = e.target.getAttribute('data-img-dimension').split(',');
-            let imgHeight = parseFloat(imgDimension[0]);
-            let imgWidth = parseFloat(imgDimension[1]);
-            imgEl.style.margin = `${(((overlayDiv.offsetHeight - imgHeight) / 2) - 38)}px ${(((0.94 * overlayDiv.offsetWidth) - imgWidth) / 2)}px`;
-            imgEl.height = imgHeight;
-            imgEl.width = imgWidth;
-            imgEl.setAttribute('data-crop-status','in-active');
-            imgEl.src = e.target.getAttribute('data-img-src');
+        let imgEl = document.querySelector('#js-crop-image');
+        let curCropStep = parseInt(imgEl.getAttribute('data-crop-step'));
+        let totalCrop = parseInt(imgEl.getAttribute('data-crop-count'));
+        if ( 0 < curCropStep  && totalCrop >= (curCropStep+1) ) {
+                    let overlayDiv = document.querySelector('#js-crop-overlay');
+                    let bufferImg = new Image();
+                    bufferImg.src = imgEl .getAttribute('data-crop-'+(curCropStep+1));
+                 
+                    bufferImg.addEventListener('load', ()=>{
+                        let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
+                        imgEl.setAttribute('data-crop-step',(curCropStep+1));
+                        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
+                        imgEl.height = opImgDim.height;
+                        imgEl.width = opImgDim.width;
+                        imgEl.src = bufferImg.src;
+                        console.log(imgEl.style.margin); 
+                    });
         }
     }
 
@@ -379,14 +371,11 @@ if(undefined != param2 && 0 !== param2.length ){
         if (undefined != cropRect ) {
             let startCo = cropRect.getAttribute('data-start-xy').split(',');
             let cropImg = document.querySelector('#js-crop-image');
+            let curCropStep = parseInt(cropImg.getAttribute('data-crop-step'))+1;
+            let cropStepCount = parseInt(cropImg.getAttribute('data-crop-count'));
             let origImgRatio = cropImg.getAttribute('data-dim-ratio').split(',');
             let overlayDiv = document.querySelector('#js-crop-overlay');
-            let prevCrop = document.querySelector('#previous-step');
-            cropImg .style.cursor = '';
-            cropRect.style.cursor = '';
-            prevCrop.setAttribute('data-img-src', cropImg.src);
-            prevCrop.setAttribute('data-img-dimension', cropImg.height + ',' + cropImg.width);
-            prevCrop.addEventListener('click', event => this.restorePreviousCrop(event));
+   
 
             let tempCanv = document.createElement('canvas');
             let tempCtx = tempCanv.getContext('2d');
@@ -394,7 +383,7 @@ if(undefined != param2 && 0 !== param2.length ){
             let imgWdRatio = parseFloat(origImgRatio[0]);
             let cropImgWd = cropRect.offsetWidth * imgWdRatio;
             let cropImgHt = cropRect.offsetHeight * imgHtRatio;
-            cropImg.style.margin = `${(((overlayDiv.offsetHeight - cropRect.offsetHeight) / 2) - 38)}px ${(((0.94 * overlayDiv.offsetWidth) - cropRect.offsetWidth) / 2)}px`;
+            cropImg.style.margin = `${((overlayDiv.offsetHeight - cropRect.offsetHeight) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - cropRect.offsetWidth) / 2)}px`;
 
             tempCanv.height = cropRect.offsetHeight;
             tempCanv.width = cropRect.offsetWidth;
@@ -405,9 +394,16 @@ if(undefined != param2 && 0 !== param2.length ){
             tempCtx.imageSmoothingQuality = 'high';
             tempCtx.drawImage(cropImg, (parseInt(startCo[0]) * imgWdRatio), ((parseInt(startCo[1])) * imgHtRatio), cropImgWd, cropImgHt, 0, 0, cropRect.offsetWidth, cropRect.offsetHeight);
             let imgBlob = tempCanv.toDataURL();
+            cropImg.setAttribute('data-crop-step',curCropStep);
+            cropImg.setAttribute('data-crop-'+curCropStep, imgBlob);
+            cropImg.setAttribute('data-crop-count',curCropStep);
             cropImg.src = imgBlob;
             cropImg.removeAttribute('data-start-co');
             overlayDiv.removeChild(cropRect);
+
+            for(let i = (curCropStep+1); i<=cropStepCount; i++){
+                cropImg.removeAttribute('data-crop-'+i);
+              }
         }
 
     }

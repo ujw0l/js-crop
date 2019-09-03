@@ -1,6 +1,10 @@
 <h1 align="center">Welcome to Js Crop 👋</h1>
 <p>
+<<<<<<< HEAD
   <img src="https://img.shields.io/badge/version-1.8.0-blue.svg?cacheSeconds=2592000" />
+=======
+  <img src="https://img.shields.io/badge/version-1.9.0-blue.svg?cacheSeconds=2592000" />
+>>>>>>> image-cache
   <a href="https://github.com/ujw0l/js-crop#readme">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" target="_blank" />
   </a>
