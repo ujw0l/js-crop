@@ -51,18 +51,18 @@ class jsCrop {
         let overlayDivEl = document.createElement("div");
         let overlayBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.overlayBgColor ? param2.customColor.overlayBgColor: 'rgba(0,0,0,1)';
         overlayDivEl.id = "js-crop-overlay";
-        overlayDivEl.style = `transition: 0.8s ease-in-out;top:0%;left:0%;right:0%;bottom:0%;height:100%;width:100%;background-color:${overlayBgColor};z-index:100000;`;
+        overlayDivEl.style = `top:0%;left:0%;right:0%;bottom:0%;height:100%;width:100%;background-color:${overlayBgColor};z-index:100000;`;
         document.body.insertBefore(overlayDivEl, document.body.firstChild);
 
         let jsCropCloseBtn = document.createElement('span');
         jsCropCloseBtn.id = "js-crop-close-btn";
         jsCropCloseBtn.title = "Close";
         jsCropCloseBtn.innerHTML = "&#10539;";
-        jsCropCloseBtn.style = `cursor:pointer;position:absolute;left:3px;font-size:20px;height:20px;width:20px;color:rgba(255,255,255,1);text-shadow:-1px -1px 1px rgba(0,0,0,1);`;
+        jsCropCloseBtn.style = `cursor:pointer;position:absolute;left:3px;font-size:${0.016*document.querySelector('#js-crop-overlay').offsetWidth}px;height:20px;width:20px;color:rgba(255,255,255,1);text-shadow:-1px -1px 1px rgba(0,0,0,1);`;
 
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, imgActWidth, imgActHeight);
-        let imgStyle = `box-shadow:0px 0px 5px rgba(255,255,255,1);display:inline-block;margin:${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.96 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px;vertical-align:top;`;
+        let imgStyle = `box-shadow:0px 0px 5px rgba(255,255,255,1);display:inline-block;margin:${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.97 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px;vertical-align:top;`;
      
 
         orgImage.id = "js-crop-image";
@@ -87,35 +87,38 @@ class jsCrop {
     }
 
     adjustApp() {
-
-        let loadedImg = document.querySelector('#js-crop-image');
         let overlayDiv = document.querySelector('#js-crop-overlay');
-        let toolbarDiv = document.querySelector('#js-crop-toolbar');
-       
-        let toolbarOpts = Array.from(toolbarDiv.querySelectorAll('div'));
-        toolbarDiv.style.height = overlayDiv.offsetHeight+'px';
-        toolbarDiv.style.paddingTop = ((overlayDiv.offsetHeight - (toolbarOpts.length * toolbarDiv.offsetWidth)) / 2) + 'px';
-       
+        if(undefined != overlayDiv){
+                let loadedImg = document.querySelector('#js-crop-image');
+                let toolbarDiv = document.querySelector('#js-crop-toolbar');
+            
+                let toolbarOpts = Array.from(toolbarDiv.querySelectorAll('div'));
+                toolbarDiv.style.height = overlayDiv.offsetHeight+'px';
+                toolbarDiv.style.paddingTop = ((overlayDiv.offsetHeight - (toolbarOpts.length * toolbarDiv.offsetWidth)) / 2) + 'px';
+            
 
-        let bufferImg = new Image();
-        bufferImg.src = loadedImg.src;
-        let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
-        loadedImg.height = opImgDim.height
-        loadedImg.width = opImgDim.width;
-        loadedImg.style.margin = `${(((overlayDiv.offsetHeight - opImgDim.height) / 2))}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
+                let bufferImg = new Image();
+                bufferImg.src = loadedImg.src;
+                let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
+                loadedImg.height = opImgDim.height
+                loadedImg.width = opImgDim.width;
+                loadedImg.style.margin = `${(((overlayDiv.offsetHeight - opImgDim.height) / 2))}px ${(((0.97 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
 
-        toolbarOpts.map(x => {
-            x.style.height = x.offsetWidth + 'px';
-            x.style.fontSize = (0.70 * x.offsetWidth) + 'px';
-        });
+                toolbarOpts.map(x => {
+                    x.style.height = x.offsetWidth + 'px';
+                    x.style.fontSize = (0.70 * x.offsetWidth) + 'px';
+                });
 
-        if(undefined != document.querySelector('#cropRect')){
-            document.querySelector('#js-crop-overlay').removeChild(document.querySelector('#js-crop-overlay').querySelector('#cropRect'));
-            document.querySelector('#start-crop').innerHTML = '&#9744;';
-            document.querySelector('#start-crop').title = `Select area`;
-            document.querySelector('#js-crop-image').setAttribute('data-crop-status','in-active');
-            document.querySelector('#js-crop-image').removeAttribute('data-start-co');
-         }
+                document.querySelector('#js-crop-close-btn').style.fontSize = (0.45 * toolbarDiv.offsetWidth) + 'px';
+                if(undefined != document.querySelector('#cropRect')){
+                    document.querySelector('#js-crop-overlay').removeChild(document.querySelector('#js-crop-overlay').querySelector('#cropRect'));
+                    document.querySelector('#start-crop').innerHTML = '&#9744;';
+                    document.querySelector('#start-crop').title = `Select area`;
+                    document.querySelector('#js-crop-image').setAttribute('data-crop-status','in-active');
+                    document.querySelector('#js-crop-image').removeAttribute('data-start-co');
+                }
+
+        }
     }
 
     createToolbar(overlayDiv, imgSrc, imgDim,param2) {
@@ -123,7 +126,7 @@ class jsCrop {
         let toolbar = document.createElement('div');
         let toolbarBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.toolbarBgColor ? param2.customColor.toolbarBgColor: 'rgba(255,255,255,1)';
         toolbar.id = `js-crop-toolbar`;
-        toolbar.style = `tex-align:center;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:4%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:${toolbarBgColor};`;
+        toolbar.style = `tex-align:center;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:3%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:${toolbarBgColor};`;
         overlayDiv.appendChild(toolbar);
 
         let btnFontColor = undefined != param2 && undefined != param2.customColor && undefined != param2.customColor.buttonFontColor ? param2.customColor.buttonFontColor : 'rgba(255,255,255,1)';
@@ -290,7 +293,7 @@ if(undefined != param2 && 0 !== param2.length ){
         imgEl.setAttribute('data-crop-count','0');
         imgEl.setAttribute('data-crop-step','0');
         var opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
-        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
+        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.97 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
         imgEl.height = opImgDim.height;
         imgEl.width = opImgDim.width;
         imgEl.setAttribute('data-crop-status','in-active');
@@ -313,7 +316,7 @@ if(undefined != param2 && 0 !== param2.length ){
                     bufferImg.addEventListener('load', ()=>{
                         let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
                         imgEl.setAttribute('data-crop-step',(curCropStep-1));
-                        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
+                        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.97 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
                         imgEl.height = opImgDim.height;
                         imgEl.width = opImgDim.width;
                         imgEl.src = bufferImg.src
@@ -334,7 +337,7 @@ if(undefined != param2 && 0 !== param2.length ){
                     bufferImg.addEventListener('load', ()=>{
                         let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
                         imgEl.setAttribute('data-crop-step',(curCropStep+1));
-                        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
+                        imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.97 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
                         imgEl.height = opImgDim.height;
                         imgEl.width = opImgDim.width;
                         imgEl.src = bufferImg.src;
@@ -383,8 +386,8 @@ if(undefined != param2 && 0 !== param2.length ){
             let imgWdRatio = parseFloat(origImgRatio[0]);
             let cropImgWd = cropRect.offsetWidth * imgWdRatio;
             let cropImgHt = cropRect.offsetHeight * imgHtRatio;
-            cropImg.style.margin = `${((overlayDiv.offsetHeight - cropRect.offsetHeight) / 2)}px ${(((0.94 * overlayDiv.offsetWidth) - cropRect.offsetWidth) / 2)}px`;
-
+            cropImg.style.margin = `${((overlayDiv.offsetHeight - cropRect.offsetHeight) / 2)}px ${(((0.97 * overlayDiv.offsetWidth) - cropRect.offsetWidth) / 2)}px`;
+            cropImg.style.cursor = '';
             tempCanv.height = cropRect.offsetHeight;
             tempCanv.width = cropRect.offsetWidth;
             cropImg.setAttribute('data-dim-ratio', '1,1');
@@ -397,6 +400,7 @@ if(undefined != param2 && 0 !== param2.length ){
             cropImg.setAttribute('data-crop-step',curCropStep);
             cropImg.setAttribute('data-crop-'+curCropStep, imgBlob);
             cropImg.setAttribute('data-crop-count',curCropStep);
+           
             cropImg.src = imgBlob;
             cropImg.removeAttribute('data-start-co');
             overlayDiv.removeChild(cropRect);
@@ -453,8 +457,8 @@ if(undefined != param2 && 0 !== param2.length ){
             imageScreenWidthRatio = 0,
             optimizedImageHeight = 0,
             optimizedImageWidth = 0;
-        var imgPercent = 0.90,
-            marginPercent = 0.1;
+        var imgPercent = 0.92,
+            marginPercent = 0.08;
 
         if ((imageActualWidth >= screenWidth) && (imageActualHeight >= screenHeight)) {
             if (imageActualWidth >= imageActualHeight) {
