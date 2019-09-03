@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Js Crop 👋</h1>
 <p>
-  <img src="https://img.shields.io/badge/version-1.6.0-blue.svg?cacheSeconds=2592000" />
+  <img src="https://img.shields.io/badge/version-1.8.0-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/ujw0l/js-crop#readme">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" target="_blank" />
   </a>
@@ -17,7 +17,7 @@
 
 </p>
 
-> JS Library to enable image cropping
+> JS Library to enable image cropping with built in UI(with option for color customization)
 
 ## Install
 
