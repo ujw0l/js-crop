@@ -46,7 +46,9 @@ include js-crop.js
                             buttonBgColor :string,    (optional, background color for buttons)
                             buttonFontColor : string, (optional, font color for button)
                             
-                      },          
+                      }, 
+              imageType:string,(optinal,cropped image type,either jpeg or png)
+              imageQuality: number,(opaitional, cropped image quality range 0 to 1);                
               saveButton:boolean (optional, set false to hide save button)
   }
   );
