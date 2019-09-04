@@ -31,7 +31,7 @@ include js-crop.js
 
 ```sh
 
- new jsCrop('selector',
+ new jsCrop('selector' (image element or upload button selector/s),
             { 
               extButton : (optional,extension which adds button to bottom of toolbar)
                         { 

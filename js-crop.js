@@ -58,7 +58,7 @@ class jsCrop {
         jsCropCloseBtn.id = "js-crop-close-btn";
         jsCropCloseBtn.title = "Close";
         jsCropCloseBtn.innerHTML = "&#10539;";
-        jsCropCloseBtn.style = `cursor:pointer;position:absolute;left:3px;font-size:${0.016*document.querySelector('#js-crop-overlay').offsetWidth}px;height:20px;width:20px;color:rgba(255,255,255,1);text-shadow:-1px -1px 1px rgba(0,0,0,1);`;
+        jsCropCloseBtn.style = `cursor:pointer;position:absolute;left:3px;font-size:${0.016*document.querySelector('#js-crop-overlay').offsetWidth}px;color:rgba(255,255,255,1);text-shadow:-1px -1px 1px rgba(0,0,0,1);`;
 
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, imgActWidth, imgActHeight);
@@ -106,7 +106,7 @@ class jsCrop {
 
                 toolbarOpts.map(x => {
                     x.style.height = x.offsetWidth + 'px';
-                    x.style.fontSize = (0.70 * x.offsetWidth) + 'px';
+                    x.style.fontSize = (0.80 * x.offsetWidth) + 'px';
                 });
 
                 document.querySelector('#js-crop-close-btn').style.fontSize = (0.45 * toolbarDiv.offsetWidth) + 'px';
@@ -236,7 +236,7 @@ if(undefined != param2 && 0 !== param2.length ){
                 x.style.height = x.offsetWidth  + 'px';
                 x.style.opacity = '1';
                 x.style.boxShadow = `-1px -1px 1px ${btnBgColor}`;
-                x.style.fontSize = (0.70 * x.offsetWidth) + 'px';
+                x.style.fontSize = (0.80 * x.offsetWidth) + 'px';
                 x.style.borderRadius = '25%';
                 x.addEventListener('click',(event)=> {
                    if(0 !== i){
@@ -457,8 +457,8 @@ if(undefined != param2 && 0 !== param2.length ){
             imageScreenWidthRatio = 0,
             optimizedImageHeight = 0,
             optimizedImageWidth = 0;
-        var imgPercent = 0.92,
-            marginPercent = 0.08;
+        var imgPercent = 0.93,
+            marginPercent = 0.07;
 
         if ((imageActualWidth >= screenWidth) && (imageActualHeight >= screenHeight)) {
             if (imageActualWidth >= imageActualHeight) {
