@@ -31,23 +31,25 @@ include js-crop.js
 
 ```sh
 
- new jsCrop('selector' (image element or upload button selector/s),
+ new jsCrop('selector', (Image element or upload button selector/s)
             { 
-              extButton : (optional,extension which adds button to bottom of toolbar)
+              extButton : (optional,extension which adds button after save image button)
                         { 
-                          buttonText : string, (optional, text for button)
-                          buttonTitle : string, (optinal, title for button)
-                          callBack : function, (required, callback function  which is passed blob of cropped image, on button click )
+                          buttonText : string, (Optional, text for button)
+                          buttonTitle : string, (Optinal, title for button)
+                          callBack : function, (Required, callback function  which is passed blob of cropped image, on button click )
                         },
-               customColor : (Optional, Options for UI color customization)
+               customColor : (Optional,Js object conataining options for UI color customization)
                         {  
-                            overlayBgColor : string, (optional, background color for overlay)
-                            toolbarBgColor : string, (optional, background color for toolbar)
-                            buttonBgColor :string,    (optional, background color for buttons)
-                            buttonFontColor : string, (optional, font color for button)
+                            overlayBgColor : string, (Optional, background color for overlay)
+                            toolbarBgColor : string, (Optional, background color for toolbar)
+                            buttonBgColor :string,    (Optional, background color for buttons)
+                            buttonFontColor : string, (Optional, font color for button)
                             
                       },          
-              saveButton:boolean (optional, set false to hide save button)
+              saveButton:boolean, (Optional, set false to hide save button)
+              imageType:'string',(Image export type jpg or png;
+              imageQuality: number,(Number from 0 to 1 for low to high image quality)
   }
   );
 
