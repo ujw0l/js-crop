@@ -39,6 +39,10 @@ class jsCrop {
 
 
     createOverlay(img,param2) {
+
+        let imgType = undefined != param2 && undefined != param2.imageType && 'jpeg'== param2.imageType? param2.imageType : 'png';
+        let imgQuality = undefined != param2 && undefined != param2.imageQuality ? param2.imageQuality : '1';
+
         let orgImage = new Image();
         orgImage.src = img.src;
         let imgActHeight = orgImage.height;
@@ -55,6 +59,8 @@ class jsCrop {
         overlayDivEl.style = `top:0%;left:0%;right:0%;bottom:0%;height:100%;width:100%;background-color:${overlayBgColor};z-index:100000;`;
         document.body.insertBefore(overlayDivEl, document.body.firstChild);
 
+   
+
         let jsCropCloseBtn = document.createElement('span');
         jsCropCloseBtn.id = "js-crop-close-btn";
         jsCropCloseBtn.title = "Close";
@@ -70,6 +76,8 @@ class jsCrop {
         orgImage.style = imgStyle;
         orgImage.height = opImgDim.height;
         orgImage.width = opImgDim.width;
+        orgImage.setAttribute('data-img-type', imgType);
+        orgImage.setAttribute('data-img-quality',imgQuality );
         orgImage.setAttribute('data-crop-status','in-active');
         orgImage.setAttribute('data-crop-step','0');
         orgImage.setAttribute('data-crop-0',orgImage.src)
@@ -122,8 +130,8 @@ class jsCrop {
         }
     }
 
-    createToolbar(overlayDiv, imgSrc, imgDim,param2) {
-
+    createToolbar(overlayDiv,imgSrc,imgDim,param2) {
+        let imgType = undefined != param2 && undefined != param2.imageType && 'jpeg' == param2.imageType  ? param2.imageType : 'png';
         let toolbar = document.createElement('div');
         let toolbarBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.toolbarBgColor ? param2.customColor.toolbarBgColor: 'rgba(255,255,255,1)';
         toolbar.id = `js-crop-toolbar`;
@@ -193,7 +201,7 @@ if(undefined != param2 && 0 !== param2.length ){
                 saveImgDiv.addEventListener('click',()=>{
                                                             let downloadLink = document.createElement('a');
                                                             downloadLink.href = this.currentImgToBlob();
-                                                            downloadLink.setAttribute('download', 'image.png');
+                                                            downloadLink.setAttribute('download', 'image.'+imgType);
                                                             downloadLink.click();
                 });
                 toolbar.appendChild(saveImgDiv);
@@ -221,7 +229,7 @@ if(undefined != param2 && 0 !== param2.length ){
         saveImgDiv.addEventListener('click',()=>{
                                                     let downloadLink = document.createElement('a');
                                                     downloadLink.href = this.currentImgToBlob();
-                                                    downloadLink.setAttribute('download', 'image.png');
+                                                    downloadLink.setAttribute('download', 'image.'+imgType);
                                                     downloadLink.click();
         });
         toolbar.appendChild(saveImgDiv);
@@ -350,6 +358,8 @@ if(undefined != param2 && 0 !== param2.length ){
     currentImgToBlob() {
         let loadedImg = document.querySelector('#js-crop-image');
         let origImgRatio = loadedImg.getAttribute('data-dim-ratio').split(',');
+        let imgType = `image/${loadedImg.getAttribute('data-img-type')}`;  
+        let imgQuality = parseFloat(loadedImg.getAttribute('data-img-quality'));
         let tempCanv = document.createElement('canvas');
         let downloadLink = document.createElement('a');
         let tempCtx = tempCanv.getContext('2d');
@@ -360,7 +370,7 @@ if(undefined != param2 && 0 !== param2.length ){
         tempCtx.imageSmoothingEnabled = true;
         tempCtx.imageSmoothingQuality = 'high';
         tempCtx.drawImage(loadedImg, 0, 0, loadedImg.offsetWidth * imgWdRatio, loadedImg.offsetHeight * imgHtRatio, 0, 0, loadedImg.offsetWidth, loadedImg.offsetHeight);
-        return tempCanv.toDataURL();
+        return tempCanv.toDataURL(imgType,imgQuality);
     }
 
     closeOverlay() {
@@ -379,6 +389,8 @@ if(undefined != param2 && 0 !== param2.length ){
             let cropStepCount = parseInt(cropImg.getAttribute('data-crop-count'));
             let origImgRatio = cropImg.getAttribute('data-dim-ratio').split(',');
             let overlayDiv = document.querySelector('#js-crop-overlay');
+            let imgQuality = parseFloat(cropImg.getAttribute('data-img-quality'));
+            let imgType = `'image/${cropImg.getAttribute('data-img-type')}`;
    
 
             let tempCanv = document.createElement('canvas');
@@ -397,7 +409,7 @@ if(undefined != param2 && 0 !== param2.length ){
             tempCtx.imageSmoothingEnabled = true;
             tempCtx.imageSmoothingQuality = 'high';
             tempCtx.drawImage(cropImg, (parseInt(startCo[0]) * imgWdRatio), ((parseInt(startCo[1])) * imgHtRatio), cropImgWd, cropImgHt, 0, 0, cropRect.offsetWidth, cropRect.offsetHeight);
-            let imgBlob = tempCanv.toDataURL();
+            let imgBlob = tempCanv.toDataURL(imgType,imgQuality);
             cropImg.setAttribute('data-crop-step',curCropStep);
             cropImg.setAttribute('data-crop-'+curCropStep, imgBlob);
             cropImg.setAttribute('data-crop-count',curCropStep);
