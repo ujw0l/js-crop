@@ -34,6 +34,7 @@ class jsCrop {
         });
 
         window.addEventListener('resize', () => this.adjustApp());
+        window.addEventListener('keydown', event => this.onKeyStroke(event));
     }
 
 
@@ -457,8 +458,8 @@ if(undefined != param2 && 0 !== param2.length ){
             imageScreenWidthRatio = 0,
             optimizedImageHeight = 0,
             optimizedImageWidth = 0;
-        var imgPercent = 0.93,
-            marginPercent = 0.07;
+        var imgPercent = 0.95,
+            marginPercent = 0.05;
 
         if ((imageActualWidth >= screenWidth) && (imageActualHeight >= screenHeight)) {
             if (imageActualWidth >= imageActualHeight) {
@@ -597,5 +598,57 @@ if(undefined != param2 && 0 !== param2.length ){
         }
 
     }
+
+
+
+    /*
+		*Handle keystroke event
+		* 
+		*@param e Key stroke event
+		*
+		*/
+
+		onKeyStroke(event){
+            let cropRect =  document.querySelector('#cropRect');
+                if (undefined != cropRect ) {
+                    let imgEl = document.querySelector('#js-crop-image');
+                    let startXy =  cropRect.getAttribute('data-start-xy').split(',');
+                    let newStartY, newStartX;
+                            switch(event.code){
+                                case 'ArrowUp' :
+                                       newStartY =  parseInt(startXy[1])-1;
+                                      if(0 <= newStartY ){
+                                        cropRect.setAttribute('data-start-xy',startXy[0]+','+newStartY);
+                                        cropRect.style.top = parseInt(cropRect.style.top)-1;
+                                      }
+                                break;
+                                case 'ArrowDown':
+                                   newStartY =  parseInt(startXy[1])+1;
+                                      if((cropRect.offsetHeight+newStartY)  <=  imgEl.offsetHeight){
+                                        cropRect.setAttribute('data-start-xy',startXy[0]+','+newStartY);
+                                        cropRect.style.top = parseInt(cropRect.style.top)+1;
+                                      }
+                                      
+                                break;
+                                case 'ArrowLeft' :
+                                    newStartX =  parseInt(startXy[0])-1 ;
+                                    if(0 <= newStartX ){
+                                      cropRect.setAttribute('data-start-xy', newStartX+','+startXy[1]);
+                                      cropRect.style.left = parseInt(cropRect.style.left)-1;
+                                    }
+                                break;
+                                case 'ArrowRight':
+                                    newStartX =  parseInt(startXy[0])+1;
+                                    if((cropRect.offsetWidth+newStartX)  <=  imgEl.offsetWidth){
+                                      cropRect.setAttribute('data-start-xy',newStartX+','+startXy[1]);
+                                      cropRect.style.left = parseInt(cropRect.style.left)+1;
+                                    }
+                                break;
+                            }
+                    }
+            }
+
+
+
 
 }
