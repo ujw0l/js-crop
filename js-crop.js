@@ -13,27 +13,27 @@ class jsCrop {
         let elList = Array.from(document.querySelectorAll(sel));
         elList.forEach((el) => {
             if(undefined != el.type && 'file' == el.type ){
-                el.addEventListener('change', event=> {
-                    let img = event.target.files[0];
-                    if(undefined != img){
-                        if(FileReader){
-                            const reader = new FileReader();
-                            reader.addEventListener("load", event => {
-                                                                    var uploadImg = new Image();
-                                                                    uploadImg.src = event.target.result
-                                                                    uploadImg.addEventListener('load', event => this. createOverlay(event.target, param2 ));
-                            });
-                            reader.readAsDataURL(img);
-                        } 
-                    }
-                }
-                    );
+                        el.addEventListener('change', event=> {
+                                    let img = event.target.files[0];
+                                    if(undefined != img){
+                                        if(FileReader){
+                                            const reader = new FileReader();
+                                            reader.addEventListener("load", event => {
+                                                                                    var uploadImg = new Image();
+                                                                                    uploadImg.src = event.target.result
+                                                                                    uploadImg.addEventListener('load', event => this. createOverlay(event.target, param2 ));
+                                                                    });
+                                            reader.readAsDataURL(img);
+                                        } 
+                                    }
+                                }
+                        );
             } else{
                 el.addEventListener('click', event => event.target.addEventListener('load', this.createOverlay(event.target,param2)));
             } 
         });
 
-        window.addEventListener('resize', () => this.adjustApp());
+        window.addEventListener('resize', event => this.adjustApp(event));
         window.addEventListener('keydown', event => this.onKeyStroke(event));
     }
 
@@ -43,63 +43,65 @@ class jsCrop {
         let imgType = undefined != param2 && undefined != param2.imageType && 'jpeg'== param2.imageType? param2.imageType : 'png';
         let imgQuality = undefined != param2 && undefined != param2.imageQuality ? param2.imageQuality : '1';
 
-        let orgImage = new Image();
-        orgImage.src = img.src;
-        let imgActHeight = orgImage.height;
-        let imgActWidth = orgImage.width;
-
         window.scrollTo(0, 0);
         document.body.style.overflow = 'hidden';
         document.body.style.margin = '0';
 
-
         let overlayDivEl = document.createElement("div");
         let overlayBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.overlayBgColor ? param2.customColor.overlayBgColor: 'rgba(0,0,0,1)';
         overlayDivEl.id = "js-crop-overlay";
-        overlayDivEl.style = `top:0%;left:0%;right:0%;bottom:0%;height:100%;width:100%;background-color:${overlayBgColor};z-index:100000;`;
+        overlayDivEl.style = `top:0%;left:0%;right:0%;bottom:0%;height:${window.innerHeight}px;width:${window.innerWidth}px;background-color:${overlayBgColor};z-index:100000;`;
         document.body.insertBefore(overlayDivEl, document.body.firstChild);
 
-   
-
-        let jsCropCloseBtn = document.createElement('span');
-        jsCropCloseBtn.id = "js-crop-close-btn";
-        jsCropCloseBtn.title = "Close";
-        jsCropCloseBtn.innerHTML = "&#10539;";
-        jsCropCloseBtn.style = `cursor:pointer;position:absolute;left:3px;font-size:${0.016*document.querySelector('#js-crop-overlay').offsetWidth}px;color:rgba(255,255,255,1);text-shadow:-1px -1px 1px rgba(0,0,0,1);`;
-
+        let orgImage = new Image();
+        orgImage.src = img.src;
+        let imgActHeight = orgImage.height;
+        let imgActWidth = orgImage.width;
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, imgActWidth, imgActHeight);
         let imgStyle = `box-shadow:0px 0px 5px rgba(255,255,255,1);display:inline-block;margin:${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.97 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px;vertical-align:top;`;
      
+            orgImage.id = "js-crop-image";
+            orgImage.style = imgStyle;
+            orgImage.height = opImgDim.height;
+            orgImage.width = opImgDim.width;
+            orgImage.setAttribute('data-img-type', imgType);
+            orgImage.setAttribute('data-img-quality',imgQuality );
+            orgImage.setAttribute('data-crop-status','in-active');
+            orgImage.setAttribute('data-crop-step','0');
+            orgImage.setAttribute('data-crop-0',orgImage.src)
+            orgImage.setAttribute('data-crop-count','0')
+            orgImage.setAttribute('draggable', 'false');
+            orgImage.setAttribute('data-dim-ratio', `${imgActWidth / opImgDim.width},${imgActHeight / opImgDim.height}`);
+            overlayDiv.appendChild(orgImage);
 
-        orgImage.id = "js-crop-image";
-        orgImage.style = imgStyle;
-        orgImage.height = opImgDim.height;
-        orgImage.width = opImgDim.width;
-        orgImage.setAttribute('data-img-type', imgType);
-        orgImage.setAttribute('data-img-quality',imgQuality );
-        orgImage.setAttribute('data-crop-status','in-active');
-        orgImage.setAttribute('data-crop-step','0');
-        orgImage.setAttribute('data-crop-0',orgImage.src)
-        orgImage.setAttribute('data-crop-count','0')
-        orgImage.setAttribute('draggable', 'false');
-        orgImage.setAttribute('data-dim-ratio', `${imgActWidth / opImgDim.width},${imgActHeight / opImgDim.height}`);
-        overlayDiv.appendChild(jsCropCloseBtn);
-        overlayDiv.appendChild(orgImage);
+     
+        let jsCropCloseBtn = document.createElement('span');
+            jsCropCloseBtn.id = "js-crop-close-btn";
+            jsCropCloseBtn.title = "Close";
+            jsCropCloseBtn.innerHTML = "&#10539;";
+            jsCropCloseBtn.addEventListener('click', () => this.closeOverlay());
+            jsCropCloseBtn.style = `cursor:pointer;position:absolute;left:3px;font-size:${0.016*document.querySelector('#js-crop-overlay').offsetWidth}px;color:rgba(255,255,255,1);text-shadow:-1px -1px 1px rgba(0,0,0,1);`;
+            overlayDiv.appendChild(jsCropCloseBtn);
 
-        this.createToolbar(overlayDiv, orgImage.src, {
-            height: opImgDim.height,
-            width: opImgDim.width,
-            dimRatio: `${imgActWidth / opImgDim.width},${imgActHeight / opImgDim.height}`
-        },param2);
-        document.querySelector('#js-crop-close-btn').addEventListener('click', () => this.closeOverlay());
+
+    this.createToolbar(overlayDiv, orgImage.src, {
+        height: opImgDim.height,
+        width: opImgDim.width,
+        dimRatio: `${imgActWidth / opImgDim.width},${imgActHeight / opImgDim.height}`
+    },param2);
+
+
     }
 
-    adjustApp() {
+    adjustApp(e) {
         let overlayDiv = document.querySelector('#js-crop-overlay');
         if(undefined != overlayDiv){
                 let loadedImg = document.querySelector('#js-crop-image');
                 let toolbarDiv = document.querySelector('#js-crop-toolbar');
+
+                overlayDiv.style.height =`${window.innerHeight}px`;
+                overlayDiv.style.width =`${window.innerWidth}px`;
             
                 let toolbarOpts = Array.from(toolbarDiv.querySelectorAll('div'));
                 toolbarDiv.style.height = overlayDiv.offsetHeight+'px';
@@ -293,7 +295,6 @@ if(undefined != param2 && 0 !== param2.length ){
 
 
     revertToOriginal(e) {
-
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let imgEl = document.querySelector('#js-crop-image');
         let cropStepCount = parseInt(imgEl.getAttribute('data-crop-count'));
@@ -301,7 +302,12 @@ if(undefined != param2 && 0 !== param2.length ){
         bufferImg.src = imgEl .getAttribute('data-crop-0');
         imgEl.setAttribute('data-crop-count','0');
         imgEl.setAttribute('data-crop-step','0');
-        var opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
+
+        for(let i=1; i<=cropStepCount; i++){
+            imgEl.removeAttribute('data-crop-'+i);
+          }
+
+        let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, bufferImg.width, bufferImg.height);
         imgEl.style.margin = `${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.97 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px`;
         imgEl.height = opImgDim.height;
         imgEl.width = opImgDim.width;
@@ -309,10 +315,9 @@ if(undefined != param2 && 0 !== param2.length ){
         imgEl.removeAttribute('data-mouse-status');
         imgEl.setAttribute('data-dim-ratio', e.target.getAttribute('data-dim-ratio'));
         imgEl.src = imgEl.getAttribute('data-crop-0');
-        for(let i=1; i<=cropStepCount; i++){
-          imgEl.removeAttribute('data-crop-'+i);
-        }
+       
     }
+
 
     restorePreviousCrop(e) {
         let imgEl = document.querySelector('#js-crop-image');
@@ -443,9 +448,7 @@ if(undefined != param2 && 0 !== param2.length ){
                                                                     if('down' == imgEl.getAttribute('data-mouse-status')){
                                                                         event.target.style.width =  event.offsetX+'px';
                                                                         event.target.style.height = event.offsetY+'px';
-                                                                    }
-                                                                   
-                                                   
+                                                                    }                               
                     });
                 } else {
                     cropRect.style.left = (parseFloat(imgEl.style.marginLeft) + par.startX) + 'px';
@@ -558,7 +561,6 @@ if(undefined != param2 && 0 !== param2.length ){
 
         if (undefined != e.target.getAttribute('data-start-co')) {
             let startCoArr = e.target.getAttribute('data-start-co').split(',');
-            e.target.setAttribute('data-end-co', `${e.offsetX},${e.offsetY}`);
             let startX = parseInt(startCoArr[0]);
             let startY = parseInt(startCoArr[1]);
             let endX = e.offsetX < 0 ? 0 : e.offsetX;
@@ -622,8 +624,11 @@ if(undefined != param2 && 0 !== param2.length ){
 
 		onKeyStroke(event){
             let cropRect =  document.querySelector('#cropRect');
+
                 if (undefined != cropRect ) {
                     let imgEl = document.querySelector('#js-crop-image');
+
+                    console.log(imgEl);
                     let startXy =  cropRect.getAttribute('data-start-xy').split(',');
                     let newStartY, newStartX;
                             switch(event.code){
@@ -631,6 +636,7 @@ if(undefined != param2 && 0 !== param2.length ){
                                        newStartY =  parseInt(startXy[1])-1;
                                       if(0 <= newStartY ){
                                         cropRect.setAttribute('data-start-xy',startXy[0]+','+newStartY);
+                                        imgEl.setAttribute('data-start-co',startXy[0]+','+newStartY);
                                         cropRect.style.top = parseInt(cropRect.style.top)-1;
                                       }
                                 break;
@@ -638,6 +644,7 @@ if(undefined != param2 && 0 !== param2.length ){
                                    newStartY =  parseInt(startXy[1])+1;
                                       if((cropRect.offsetHeight+newStartY)  <=  imgEl.offsetHeight){
                                         cropRect.setAttribute('data-start-xy',startXy[0]+','+newStartY);
+                                        imgEl.setAttribute('data-start-co',startXy[0]+','+newStartY);
                                         cropRect.style.top = parseInt(cropRect.style.top)+1;
                                       }
                                       
@@ -646,6 +653,7 @@ if(undefined != param2 && 0 !== param2.length ){
                                     newStartX =  parseInt(startXy[0])-1 ;
                                     if(0 <= newStartX ){
                                       cropRect.setAttribute('data-start-xy', newStartX+','+startXy[1]);
+                                      imgEl.setAttribute('data-start-co',newStartX+','+startXy[1]);
                                       cropRect.style.left = parseInt(cropRect.style.left)-1;
                                     }
                                 break;
@@ -653,6 +661,7 @@ if(undefined != param2 && 0 !== param2.length ){
                                     newStartX =  parseInt(startXy[0])+1;
                                     if((cropRect.offsetWidth+newStartX)  <=  imgEl.offsetWidth){
                                       cropRect.setAttribute('data-start-xy',newStartX+','+startXy[1]);
+                                      imgEl.setAttribute('data-start-co',newStartX+','+startXy[1]);
                                       cropRect.style.left = parseInt(cropRect.style.left)+1;
                                     }
                                 break;
