@@ -38,6 +38,13 @@ class jsCrop {
     }
 
 
+    /*
+    * Create overlay and initialize cropping
+    *
+    *@param img image to be cropped
+    *
+    */
+
     createOverlay(img,param2) {
 
         let imgType = undefined != param2 && undefined != param2.imageType && 'jpeg'== param2.imageType? param2.imageType : 'png';
@@ -94,6 +101,13 @@ class jsCrop {
 
     }
 
+    /*
+    * Adjust crop overlay on window resize
+    *
+    *@param e resize event
+    *
+    */
+
     adjustApp(e) {
         let overlayDiv = document.querySelector('#js-crop-overlay');
         if(undefined != overlayDiv){
@@ -131,6 +145,15 @@ class jsCrop {
 
         }
     }
+
+    /*
+    * Create toolbar 
+    *
+    *@param overlayDiv Overlay div object 
+    *@param imgSrc  Image source of image to be loaded
+    *@param imgDim  Image dimension to load
+	*@param param2 for future extension
+    */
 
     createToolbar(overlayDiv,imgSrc,imgDim,param2) {
         let imgType = undefined != param2 && undefined != param2.imageType && 'jpeg' == param2.imageType  ? param2.imageType : 'png';
@@ -294,6 +317,13 @@ if(undefined != param2 && 0 !== param2.length ){
     }
 
 
+    /*
+    * Revert to original image
+    *
+    *@param e  Button click event
+    *
+    */
+
     revertToOriginal(e) {
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let imgEl = document.querySelector('#js-crop-image');
@@ -319,6 +349,12 @@ if(undefined != param2 && 0 !== param2.length ){
     }
 
 
+    /*
+    * Resotre previous crop step
+    *
+    *@param e button click event
+    *
+    */
     restorePreviousCrop(e) {
         let imgEl = document.querySelector('#js-crop-image');
         let curCropStep = parseInt(imgEl.getAttribute('data-crop-step'));
@@ -338,6 +374,12 @@ if(undefined != param2 && 0 !== param2.length ){
         }
     }
 
+   /*
+    * Resotre next crop step
+    *
+    *@param e button click event
+    *
+    */
 
     restoreNextCrop(e) {
         let imgEl = document.querySelector('#js-crop-image');
@@ -360,6 +402,10 @@ if(undefined != param2 && 0 !== param2.length ){
         }
     }
 
+    /*
+    * Restore current crop state to blob
+    *
+    */
     currentImgToBlob() {
         let loadedImg = document.querySelector('#js-crop-image');
         let origImgRatio = loadedImg.getAttribute('data-dim-ratio').split(',');
@@ -378,11 +424,19 @@ if(undefined != param2 && 0 !== param2.length ){
         return tempCanv.toDataURL(imgType,imgQuality);
     }
 
+     /*
+    * Close overlay on close button click
+    */
+
     closeOverlay() {
         document.body.removeChild(document.querySelector('#js-crop-overlay'));
         document.body.style.overflow = '';
         document.body.style.margin = ''
     }
+
+    /*
+    *End crop on crop button click
+    */
 
     endCrop() {
 
@@ -430,6 +484,13 @@ if(undefined != param2 && 0 !== param2.length ){
 
     }
 
+    /*
+    * Create cropbox on button click
+    *
+    *@param e mousmover event
+    *
+    */
+
     createCropBox(e) {
         let imgEl = document.querySelector("#js-crop-image");
         if ('in-active' != imgEl.getAttribute('data-crop-status') && 'down' == imgEl.getAttribute('data-mouse-status')) {
@@ -464,9 +525,15 @@ if(undefined != param2 && 0 !== param2.length ){
  
 
        
-
-
-
+    /*
+    * Optimize image size to fit screen
+    *
+    *@param screenWidth  window.innerWidth
+    *@param screenHeight  window.innerHeight
+    *@param imageActualWidth  actual width of image
+    *@param imageActualHeight  actual height of image
+	*@return object object with optimized image width and height
+    */
     getOptimizedImageSize(screenWidth, screenHeight, imageActualWidth, imageActualHeight) {
 
         var imageScreenHeightRatio = 0,
@@ -479,7 +546,6 @@ if(undefined != param2 && 0 !== param2.length ){
         if ((imageActualWidth >= screenWidth) && (imageActualHeight >= screenHeight)) {
             if (imageActualWidth >= imageActualHeight) {
                 if (imageActualWidth > imageActualHeight) {
-
                     imageScreenWidthRatio = imageActualWidth / screenWidth;
                     optimizedImageWidth = (imageActualWidth / imageScreenWidthRatio) - (marginPercent * screenWidth);
                     optimizedImageHeight = imageActualHeight * (optimizedImageWidth / imageActualWidth);
@@ -489,28 +555,23 @@ if(undefined != param2 && 0 !== param2.length ){
                         optimizedImageWidth = imageActualWidth * (optimizedImageHeight / imageActualHeight);
                     }
                 } else {
-
                     if (screenWidth > screenHeight) {
                         optimizedImageHeight = (imgPercent * screenHeight);
                         optimizedImageWidth = optimizedImageHeight;
-
                     } else if (screenHeight > screenWidth) {
                         optimizedImageWidth = (imgPercent * screenWidth);
                         optimizedImageHeight = optimizedImageWidth;
-
                     } else {
                         imageScreenHeightRatio = screenHeight / imageActualHeight;
                         optimizedImageHeight = imageActualHeight * imageScreenHeightRatio - (marginPercent * screenHeight);
                         optimizedImageWidth = imageActualWidth * (optimizedImageHeight / imageActualHeight);
                     }
                 }
-
             } else {
                 imageScreenHeightRatio = imageActualHeight / screenHeight;
                 optimizedImageHeight = (imageActualHeight / imageScreenHeightRatio) - (marginPercent * screenHeight);
                 optimizedImageWidth = imageActualWidth * (optimizedImageHeight / imageActualHeight);
             }
-
         } else if (imageActualWidth >= screenWidth && imageActualHeight < screenHeight) {
             imageScreenWidthRatio = screenWidth / imageActualWidth;
             optimizedImageWidth = imageActualWidth * imageScreenWidthRatio - (marginPercent * screenWidth);
@@ -542,21 +603,24 @@ if(undefined != param2 && 0 !== param2.length ){
             }
             optimizedImageHeight = imageActualHeight * (optimizedImageWidth / imageActualWidth);
         }
-
-
         //at last check it optimized width is still large			
         if (optimizedImageWidth > (imgPercent * screenWidth)) {
             optimizedImageWidth = imgPercent * screenWidth;
             optimizedImageHeight = imageActualHeight * (optimizedImageWidth / imageActualWidth);
         }
-
         return {
             width: optimizedImageWidth,
             height: optimizedImageHeight
         };
     }
 
-
+    
+    /*
+    * Set crop canvas coordinate
+    *
+    *@param e mousmove event
+    *
+    */
     setCanvasCo(e) {
 
         if (undefined != e.target.getAttribute('data-start-co')) {
@@ -613,16 +677,13 @@ if(undefined != param2 && 0 !== param2.length ){
 
     }
 
-
-
     /*
-		*Handle keystroke event
-		* 
-		*@param e Key stroke event
-		*
-		*/
-
-		onKeyStroke(event){
+	*Handle keystroke event
+	* 
+	*@param e Key stroke event
+	*
+	*/
+	onKeyStroke(event){
             let cropRect =  document.querySelector('#cropRect');
 
                 if (undefined != cropRect ) {

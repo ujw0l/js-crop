@@ -13,7 +13,7 @@
 
 </p>
 
-> JS Library to enable image cropping with built in UI(with color customization options to fit look and feel of you website/web app)
+> Js Library to enable image cropping with built in UI(with color customization options to fit look and feel of you website/web app)
 
 ## Install
 
@@ -46,17 +46,10 @@ include js-crop.js
                             buttonBgColor :string,    (Optional, background color for buttons)
                             buttonFontColor : string, (Optional, font color for button)
                             
-<<<<<<< HEAD
-                      },          
-              saveButton:boolean, (Optional, set false to hide save button)
-              imageType:'string',(Image export type jpg or png;
-              imageQuality: number,(Number from 0 to 1 for low to high image quality)
-=======
                       }, 
               imageType:string,(optinal,cropped image type,either jpeg or png)
               imageQuality: number,(opaitional, cropped image quality range 0 to 1);                
               saveButton:boolean (optional, set false to hide save button)
->>>>>>> image-quality-format
   }
   );
 
