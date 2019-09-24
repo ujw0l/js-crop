@@ -9,7 +9,7 @@
 'use strict'
 class jsCrop {
 
-    constructor(sel,param2) {
+    constructor(sel,param2,param3) {
         let elList = Array.from(document.querySelectorAll(sel));
         elList.forEach((el) => {
             if(undefined != el.type && 'file' == el.type ){
@@ -29,7 +29,7 @@ class jsCrop {
                                 }
                         );
             } else{
-                el.addEventListener('click', event => event.target.addEventListener('load', this.createOverlay(event.target,param2)));
+                el.addEventListener('click', event => event.target.addEventListener('load', this.createOverlay(event.target,param2,param3)));
             } 
         });
 
@@ -45,7 +45,7 @@ class jsCrop {
     *
     */
 
-    createOverlay(img,param2) {
+    createOverlay(img,param2,param3) {
 
         let imgType = undefined != param2 && undefined != param2.imageType && 'jpeg'== param2.imageType? param2.imageType : 'png';
         let imgQuality = undefined != param2 && undefined != param2.imageQuality ? param2.imageQuality : '1';
@@ -96,7 +96,7 @@ class jsCrop {
         height: opImgDim.height,
         width: opImgDim.width,
         dimRatio: `${imgActWidth / opImgDim.width},${imgActHeight / opImgDim.height}`
-    },param2);
+    },param2,param3);
 
 
     }
@@ -155,7 +155,7 @@ class jsCrop {
 	*@param param2 for future extension
     */
 
-    createToolbar(overlayDiv,imgSrc,imgDim,param2) {
+    createToolbar(overlayDiv,imgSrc,imgDim,param2,param3) {
         let imgType = undefined != param2 && undefined != param2.imageType && 'jpeg' == param2.imageType  ? param2.imageType : 'png';
         let toolbar = document.createElement('div');
         let toolbarBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.toolbarBgColor ? param2.customColor.toolbarBgColor: 'rgba(255,255,255,1)';
@@ -261,8 +261,28 @@ if(undefined != param2 && 0 !== param2.length ){
 }
         
 
-        let toolbarDiv = document.querySelector('#js-crop-toolbar');
-        let toolbarOpts = Array.from(toolbarDiv.querySelectorAll('div'));;
+if(undefined != param3 && 0 !== param3.length ){
+
+   param3.map((x,i)=>{
+    let btnEvnt =  undefined != x.buttonEvent ? x.buttonEvent : 'click';
+    let addBtnDiv = document.createElement('div');
+    addBtnDiv.id = `ext-button-${i}`;
+    addBtnDiv.style = btnStyle;
+    addBtnDiv.setAttribute('onmouseenter', btnMouseenter);
+    addBtnDiv.setAttribute('onmouseleave', btnMouseleave);
+    addBtnDiv.title = x.buttonTitle ? x.buttonTitle: `Button ${i+1}`;
+    addBtnDiv.innerHTML = x.buttonText ? x.buttonText: `Bt`;
+    if('function' == typeof(x.callBack)){
+        addBtnDiv.addEventListener( btnEvnt, ()=>x.callBack(this.currentImgToBlob(),x.relParam));
+    }
+    toolbar.appendChild(addBtnDiv);
+   });
+
+}
+
+
+    let toolbarDiv = document.querySelector('#js-crop-toolbar');
+    let toolbarOpts = Array.from(toolbarDiv.querySelectorAll('div'));;
 
         toolbarDiv.style.paddingTop = ((overlayDiv.offsetHeight - (toolbarOpts.length * toolbarDiv.offsetWidth)) / 2) + 'px'
         toolbarOpts.map((x, i) => {
@@ -286,6 +306,15 @@ if(undefined != param2 && 0 !== param2.length ){
             }, (5 * i))
         });
     }
+
+
+   
+    /*
+    * Active crop area select
+    *
+    *@param e  Select area button click event
+    *
+    */ 
 
     addCropEventListener(e) {
         let imgEl =  document.querySelector('#js-crop-image');
