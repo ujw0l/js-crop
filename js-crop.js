@@ -21,7 +21,7 @@ class jsCrop {
                                             reader.addEventListener("load", event => {
                                                                                     var uploadImg = new Image();
                                                                                     uploadImg.src = event.target.result
-                                                                                    uploadImg.addEventListener('load', event => this. createOverlay(event.target, param2 ));
+                                                                                    uploadImg.addEventListener('load', event => this. createOverlay(event.target, param2,param3 ));
                                                                     });
                                             reader.readAsDataURL(img);
                                         } 
@@ -50,9 +50,14 @@ class jsCrop {
         let imgType = undefined != param2 && undefined != param2.imageType && 'jpeg'== param2.imageType? param2.imageType : 'png';
         let imgQuality = undefined != param2 && undefined != param2.imageQuality ? param2.imageQuality : '1';
 
+
+        let scrollCss =  document.createElement('style');
+        scrollCss.id = 'ctc-scroll-css';
+        scrollCss.innerHTML = `body{ overflow:hidden;margin:0;} ::-webkit-scrollbar-track {background: rgba(255, 255, 255, 1);} ::-moz-scrollbar-track { background: rgba(255, 255, 255, 1);} #js-crop-toolbar::-webkit-scrollbar {display: none;} #js-crop-toolbar::-moz-scrollbar {display: none;}`;
+        document.querySelector('head').appendChild(scrollCss);
         window.scrollTo(0, 0);
-        document.body.style.overflow = 'hidden';
-        document.body.style.margin = '0';
+  
+    
 
         let overlayDivEl = document.createElement("div");
         let overlayBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.overlayBgColor ? param2.customColor.overlayBgColor: 'rgba(0,0,0,1)';
@@ -160,7 +165,7 @@ class jsCrop {
         let toolbar = document.createElement('div');
         let toolbarBgColor = undefined != param2 &&  undefined != param2.customColor && undefined != param2.customColor.toolbarBgColor ? param2.customColor.toolbarBgColor: 'rgba(255,255,255,1)';
         toolbar.id = `js-crop-toolbar`;
-        toolbar.style = `tex-align:center;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:3%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:${toolbarBgColor};`;
+        toolbar.style = `tex-align:center;padding:2px;color:rgba(255,255,255,1);display:inline-block;width:3%;height:${overlayDiv.offsetHeight}px;position:absolute;float:right;right:0;background-color:${toolbarBgColor};overflow-y:auto;`;
         overlayDiv.appendChild(toolbar);
 
         let btnFontColor = undefined != param2 && undefined != param2.customColor && undefined != param2.customColor.buttonFontColor ? param2.customColor.buttonFontColor : 'rgba(255,255,255,1)';
@@ -235,7 +240,7 @@ if(undefined != param2 && 0 !== param2.length ){
             if(undefined != param2.extButton  && 0 !== param2.extButton.length && 'function' == typeof(param2.extButton.callBack)){ 
                 let extBtnDiv = document.createElement('div');
                 extBtnDiv.id = `ext-button`;
-                extBtnDiv.style = btnStyle;
+                extBtnDiv.style = undefined != param2.extButton.buttonCSS ? btnStyle +param2.extButton.buttonCSS : btnStyle;
                 extBtnDiv.setAttribute('onmouseenter', btnMouseenter);
                 extBtnDiv.setAttribute('onmouseleave', btnMouseleave);
                 extBtnDiv.title = param2.extButton.buttonTitle ? param2.extButton.buttonTitle: 'Extension';
@@ -259,19 +264,17 @@ if(undefined != param2 && 0 !== param2.length ){
         });
         toolbar.appendChild(saveImgDiv);
 }
-        
 
 if(undefined != param3 && 0 !== param3.length ){
-
    param3.map((x,i)=>{
     let btnEvnt =  undefined != x.buttonEvent ? x.buttonEvent : 'click';
     let addBtnDiv = document.createElement('div');
     addBtnDiv.id = `ext-button-${i}`;
-    addBtnDiv.style = btnStyle;
+    addBtnDiv.style = undefined != x.buttonCSS ? btnStyle + x.buttonCSS : btnStyle;
     addBtnDiv.setAttribute('onmouseenter', btnMouseenter);
     addBtnDiv.setAttribute('onmouseleave', btnMouseleave);
     addBtnDiv.title = x.buttonTitle ? x.buttonTitle: `Button ${i+1}`;
-    addBtnDiv.innerHTML = x.buttonText ? x.buttonText: `Bt`;
+    addBtnDiv.innerHTML = x.buttonText ? x.buttonText: `ext`;
     if('function' == typeof(x.callBack)){
         addBtnDiv.addEventListener( btnEvnt, ()=>x.callBack(this.currentImgToBlob(),x.relParam));
     }
@@ -459,8 +462,9 @@ if(undefined != param3 && 0 !== param3.length ){
 
     closeOverlay() {
         document.body.removeChild(document.querySelector('#js-crop-overlay'));
-        document.body.style.overflow = '';
-        document.body.style.margin = ''
+		document.body.style.overflow = '';
+		document.body.style.margin = ''
+		document.querySelector('head').removeChild(document.querySelector('#ctc-scroll-css'));
     }
 
     /*

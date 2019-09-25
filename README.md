@@ -31,12 +31,13 @@ include js-crop.js
 
 ```sh
 
- new jsCrop('selector', (Image element or upload button selector/s)
+ new jsCrop('selector', (Image element or upload button selector/s refer to querySelector and querySelectorAll)
             { 
               extButton : (optional,extension which adds button after save image button)
                         { 
                           buttonText : string, (Optional, text for button)
-                          buttonTitle : string, (Optinal, title for button)
+                          buttonTitle : string, (Optional, title for button)
+                          buttonCSS   : string, (Optional, additional styling for extension button)
                           callBack : function, (Required, callback function  which is passed blob of cropped image, on button click )
                         },
                customColor : (Optional,Js object conataining options for UI color customization)
@@ -50,11 +51,23 @@ include js-crop.js
               imageType:string,(optinal,cropped image type,either jpeg or png)
               imageQuality: number,(opaitional, cropped image quality range 0 to 1);                
               saveButton:boolean (optional, set false to hide save button)
-  }
+  },
+  [ (Array of one or multiple button objects  like  one below ☟)
+    { (Object with button properties)
+      buttonText : string, (Optional, text for button)
+      buttonTitle : string,(Optional, title for button)
+      relParam : any,(Optional, any data type to be relayed back to callback function as second parameter)
+      buttonEvent : event, (Optional, event to attach button for callback default click,  refer to "addEventListener" events)
+      buttonCSS : string, (Optional, additinal styling for button)
+      callBack : function,(required, callback function for button, which gets image blob as first parameter and relParam as second )
+      },
+  
+  ]
   );
 
 *parameter 1 (required) : selector for images to be cropped, one or multiple
-*parameter 2 (optional): object with option to display extension button (extButton) and hide save button
+*parameter 2 (optional): object to modify UI look and functionalities and develop library extension
+*parameter 3 (optional): Array which contains objects for one or multiple buttons 
 ```
 
 ## Contributing
