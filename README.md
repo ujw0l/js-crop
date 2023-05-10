@@ -24,7 +24,10 @@ npm i js-crop
 ## Script
 
 ```sh
-include js-crop.js
+<script type:"text/javascript" src="src/js-crop.js"></script>
+or 
+
+<script type:"text/javascript" src="src/js-crop.min.js"></script>
 ```
 
 ## Initialize 
@@ -91,6 +94,9 @@ Please ⭐️ this repository if this project helped you!
 <a href="https://www.patreon.com/ujw0l">
   <img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="160">
 </a>
+</li>
+<li>
+<a href="https://www.buymeacoffee.com/ujw0l"> Buy me Coffee </a>
 </li>
 <li>
 <a href="https://tidelift.com/subscription/pkg/npm-js-crop?utm_source=npm-js-crop&utm_medium=referral&utm_campaign=readme">Get supported js-crop with the Tidelift Subscription</a>

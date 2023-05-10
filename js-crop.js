@@ -74,7 +74,7 @@ class jsCrop {
         let imgActWidth = orgImage.width;
         let overlayDiv = document.querySelector('#js-crop-overlay');
         let opImgDim = this.getOptimizedImageSize(overlayDiv.offsetWidth, overlayDiv.offsetHeight, imgActWidth, imgActHeight);
-        let imgStyle = `box-shadow:0px 0px 5px rgba(255,255,255,1);display:inline-block;margin:${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.97 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px;vertical-align:top;`;
+        let imgStyle = `border: 0.5px dotted rgba(255,255,255,1);display:inline-block;margin:${((overlayDiv.offsetHeight - opImgDim.height) / 2)}px ${(((0.97 * overlayDiv.offsetWidth) - opImgDim.width) / 2)}px;vertical-align:top;`;
 
         orgImage.id = "js-crop-image";
         orgImage.style = imgStyle;
@@ -630,7 +630,9 @@ class jsCrop {
      * @param par Cropbox height width object
      */
     addResizeBoxes(cropRect, par,e, imgEl) {
-        let boxStyle = `background-color :rgba(0,0,0,1);width:10px;height:10px;border:1px solid rgba(255,255,255,255);border-radius:50%;`;
+
+
+        let boxStyle = `background-color :rgba(0,0,0,0.7);width:10px;height:10px;border:1px solid rgba(255,255,255,255);`;
         let resizeBoxes = cropRect.querySelectorAll('span');
      
 
@@ -739,14 +741,15 @@ class jsCrop {
             cropRect.querySelector('#ew-resize-two').style = boxStyle + `cursor:ew-resize;margin-left:-6px; margin-top: ${(par.height / 2) - 6}px; position:absolute;`;
           
         }else{ 
-          if('cropRect' != e.target.id   ){
+
+            let imgBdRect = imgEl.getBoundingClientRect();  
+
+          if('cropRect' != e.target.id && imgBdRect.x <= e.clientX && imgBdRect.y <= e.clientY && (imgBdRect.x+imgBdRect.width) >= e.clientX && (imgBdRect.y+imgBdRect.height) >= e.clientY    ){
          
 
 
             if( null != cropRect.getAttribute('data-prev-mousepos') ){
-
             let bdRect = cropRect.getBoundingClientRect();   
-            
             let prevPos =  cropRect.getAttribute('data-prev-mousepos').split('-');
                
                 let xDiff =   Math.abs(parseInt( prevPos[0] ) -  e.clientX);
@@ -851,6 +854,7 @@ class jsCrop {
                     cropRect.querySelector('#ew-resize-two').style = boxStyle + `cursor:ew-resize;margin-left:-6px; margin-top: ${(cropRect.offsetHeight / 2) - 6}px; position:absolute;`;
                     cropRect.setAttribute('data-prev-mousepos',`${e.clientX}-${e.clientY}`);
             }
+            
         }
     }
 }
@@ -1007,7 +1011,7 @@ class jsCrop {
 
     /** 
     *Handle keystroke event
-    *@param e Key stroke event
+    *@param event Key stroke event
     *
     */
 
@@ -1061,3 +1065,4 @@ class jsCrop {
 
 
 }
+
