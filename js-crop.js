@@ -601,8 +601,7 @@ class jsCrop {
                     cropRect.addEventListener('mousemove', e => {
                         if ('down' == imgEl.getAttribute('data-mouse-status')) {
                             this.addResizeBoxes(cropRect, { width: cropRect.offsetWidth, height: cropRect.offsetHeight },e,imgEl);
-                            this.resizeCropBoxInner(imgEl, cropRect, e);
-                          
+                            
                         }
                     });
 
@@ -621,79 +620,7 @@ class jsCrop {
     }
 
 
-    /**
-     * resize crop boxed inside
-     * 
-     * @param imgEl Loaded image element
-     * @param cropBox Slected crop area
-     * @param e Mousemove event
-     * 
-     */
-    resizeCropBoxInner(imgEl, cropRect, e) {
-        
-        let activeResize = cropRect.getAttribute('data-resize');
-        let [X, Y] = cropRect.getAttribute('data-start-xy').split(',');
-        let xDiff = Math.abs(e.movementX);
-        let yDiff = Math.abs(e.movementY);
-        if (null != activeResize)
-            switch (e.target.id) {
-                case 'nwse-resize-one':
-                    cropRect.style.width = (parseInt(cropRect.style.width) - xDiff) + 'px';
-                    cropRect.style.height = (parseInt(cropRect.style.height) - yDiff) + 'px';
-                    cropRect.style.left = (parseInt(cropRect.style.left) + xDiff) + 'px';
-                    cropRect.style.top = (parseInt(cropRect.style.top) + yDiff) + 'px'
-                    cropRect.setAttribute('data-start-xy', (parseInt(X) + xDiff) + ',' + (parseInt(Y) + yDiff));
-                    imgEl.setAttribute('data-start-co', (parseInt(X) + xDiff) + ',' + (parseInt(Y) + yDiff));
-                    break;
-                case 'ns-resize-one':
-                    cropRect.style.height = (parseInt(cropRect.style.height) - yDiff) + 'px';
-                    cropRect.style.top = (parseInt(cropRect.style.top) + yDiff) + 'px'
-                    cropRect.setAttribute('data-start-xy', X + ',' + (parseInt(Y) + yDiff));
-                    imgEl.setAttribute('data-start-co', X + ',' + (parseInt(Y) + yDiff));
-
-                    break;
-                case 'nesw-resize-one':
-                    cropRect.style.width = (parseInt(cropRect.style.width) - xDiff) + 'px';
-                    cropRect.style.height = (parseInt(cropRect.style.height) - yDiff) + 'px';
-                    cropRect.style.top = (parseInt(cropRect.style.top) + xDiff) + 'px'
-                    cropRect.setAttribute('data-start-xy', X + ',' + (parseInt(Y) - yDiff));
-                    imgEl.setAttribute('data-start-co', X + ',' + (parseInt(Y) - yDiff));
-
-
-                    break;
-                case 'ew-resize-one':
-                    cropRect.style.width = (parseInt(cropRect.style.width) - xDiff) + 'px';
-
-                    break;
-                case 'nwse-resize-two':
-                    cropRect.style.width = (parseInt(cropRect.style.width) - xDiff) + 'px';
-                    cropRect.style.height = (parseInt(cropRect.style.height) - yDiff) + 'px';
-
-                    break;
-                case 'ns-resize-two':
-                    cropRect.style.height = (parseInt(cropRect.style.height) - yDiff) + 'px';
-
-                    break;
-                case 'nesw-resize-two':
-                    cropRect.style.width = (parseInt(cropRect.style.width) - xDiff) + 'px';
-                    cropRect.style.height = (parseInt(cropRect.style.height) - yDiff) + 'px';
-                    cropRect.style.left = (parseInt(cropRect.style.left) + xDiff) + 'px';
-                    cropRect.setAttribute('data-start-xy', (parseInt(X) + xDiff) + ',' + Y);
-                    imgEl.setAttribute('data-start-co', (parseInt(X) + xDiff) + ',' + Y);
-
-                    break;
-                case 'ew-resize-two':
-                    cropRect.style.width = (parseInt(cropRect.style.width) - xDiff) + 'px';
-                    cropRect.style.left = (parseInt(cropRect.style.left) + xDiff) + 'px';
-                    cropRect.setAttribute('data-start-xy', (parseInt(X) + xDiff) + ',' + Y);
-                    imgEl.setAttribute('data-start-co', (parseInt(X) + yDiff) + ',' + Y);
-
-                    break;
-                default:
-            }
-
-            
-    }
+  
 
     /**
      * Add and reposition resize boxes
@@ -705,7 +632,7 @@ class jsCrop {
     addResizeBoxes(cropRect, par,e, imgEl) {
         let boxStyle = `background-color :rgba(0,0,0,1);width:10px;height:10px;border:1px solid rgba(255,255,255,255);border-radius:50%;`;
         let resizeBoxes = cropRect.querySelectorAll('span');
-       // let bdRect = cropRect.getBoundingClientRect();
+     
 
         if (0 === resizeBoxes.length) {
             let nwseResizeOne = document.createElement('span');
@@ -713,6 +640,7 @@ class jsCrop {
             nwseResizeOne.id = "nwse-resize-one";
             nwseResizeOne.setAttribute('draggable', false)
             nwseResizeOne.addEventListener('mousedown', () => {
+                cropRect.setAttribute('data-prev-mousepos','')
                 imgEl.setAttribute('data-mouse-status','up')
                 cropRect.setAttribute('data-resize', "nwse-resize-one")
             })
@@ -724,6 +652,7 @@ class jsCrop {
             nsResizeOne.id = "ns-resize-one";
             nsResizeOne.setAttribute('draggable', false)
             nsResizeOne.addEventListener('mousedown', () => {
+                cropRect.setAttribute('data-prev-mousepos','')
                 imgEl.setAttribute('data-mouse-status','up')
                 cropRect.setAttribute('data-resize', "ns-resize-one")
             })
@@ -735,6 +664,7 @@ class jsCrop {
             neswResizeOne.id = 'nesw-resize-one';
             neswResizeOne.setAttribute('draggable', false)
             neswResizeOne.addEventListener('mousedown', () => {
+                cropRect.setAttribute('data-prev-mousepos','')
                 imgEl.setAttribute('data-mouse-status','up')
                 cropRect.setAttribute('data-resize', "nesw-resize-one")
             })
@@ -746,6 +676,7 @@ class jsCrop {
             ewResizeOne.id = 'ew-resize-one';
             ewResizeOne.setAttribute('draggable', false)
             ewResizeOne.addEventListener('mousedown', () => {
+                cropRect.setAttribute('data-prev-mousepos','')
                 imgEl.setAttribute('data-mouse-status','up')
                 cropRect.setAttribute('data-resize', "ew-resize-one")})
             ewResizeOne.addEventListener('mouseup', () => cropRect.setAttribute('data-resize', ""));;
@@ -756,6 +687,7 @@ class jsCrop {
             nwseResizeTwo.id = 'nwse-resize-two';
             nwseResizeTwo.setAttribute('draggable', false)
             nwseResizeTwo.addEventListener('mousedown', () => {
+                cropRect.setAttribute('data-prev-mousepos','')
                 imgEl.setAttribute('data-mouse-status','up')
                 cropRect.setAttribute('data-resize', "nwse-resize-two")
             })
@@ -767,6 +699,7 @@ class jsCrop {
             nsResizeTwo.id = 'ns-resize-two';
             nsResizeTwo.setAttribute('draggable', false)
             nsResizeTwo.addEventListener('mousedown', () =>{ 
+                cropRect.setAttribute('data-prev-mousepos','')
                 imgEl.setAttribute('data-mouse-status','up')
                 cropRect.setAttribute('data-resize', "ns-resize-two")})
             nsResizeTwo.addEventListener('mouseup', () => cropRect.setAttribute('data-resize', ""));
@@ -777,6 +710,7 @@ class jsCrop {
             neswResizeTwo.id = 'nesw-resize-two';
             neswResizeTwo.setAttribute('draggable', false)
             neswResizeTwo.addEventListener('mousedown', () => {
+                cropRect.setAttribute('data-prev-mousepos','')
                 imgEl.setAttribute('data-mouse-status','up')
                 cropRect.setAttribute('data-resize', "nesw-resize-two")})
             neswResizeTwo.addEventListener('mouseup', () => cropRect.setAttribute('data-resize', ""));;
@@ -787,6 +721,7 @@ class jsCrop {
             ewResizeTwo.id = 'ew-resize-two';
             ewResizeTwo.setAttribute('draggable', false)
             ewResizeTwo.addEventListener('mousedown', () => {
+                cropRect.setAttribute('data-prev-mousepos','')
                 imgEl.setAttribute('data-mouse-status','up')
                 cropRect.setAttribute('data-resize', "ew-resize-two")})
             ewResizeTwo.addEventListener('mouseup', () => cropRect.setAttribute('data-resize', ""));;
@@ -802,87 +737,111 @@ class jsCrop {
             cropRect.querySelector('#ns-resize-two').style = boxStyle + `cursor:ns-resize;margin-left:${(par.width / 2) - 6}px; margin-top: ${par.height - 7}px;position:absolute; `;
             cropRect.querySelector('#nesw-resize-two').style = boxStyle + `cursor:nesw-resize;margin-left:-7px; margin-top:${par.height - 7}px;position:absolute;`;
             cropRect.querySelector('#ew-resize-two').style = boxStyle + `cursor:ew-resize;margin-left:-6px; margin-top: ${(par.height / 2) - 6}px; position:absolute;`;
-            cropRect.setAttribute('data-prev-mousepos',`${e.clientX}-${e.clientY}`);
-        }else{
+          
+        }else{ 
+          if('cropRect' != e.target.id   ){
+         
 
 
-        
-          if('cropRect' != e.target.id && 'js-crop-image' != e.target.id  ){
-           let [prevMouseX,prevMouseY] = cropRect.getAttribute('data-prev-mousepos').split('-')
+            if( null != cropRect.getAttribute('data-prev-mousepos') ){
+
+            let bdRect = cropRect.getBoundingClientRect();   
+            
+            let prevPos =  cropRect.getAttribute('data-prev-mousepos').split('-');
+               
+                let xDiff =   Math.abs(parseInt( prevPos[0] ) -  e.clientX);
+                let yDiff =  Math.abs(parseInt( prevPos[1] ) -  e.clientY);
 
              switch(cropRect.getAttribute('data-resize')){
-                
                 case "nwse-resize-one":
+               if(bdRect.x > e.clientX && bdRect.y > e.clientY){      
+                cropRect.style.top = (parseInt(cropRect.style.top)-yDiff )+'px';
+                cropRect.style.left = (parseInt(cropRect.style.left)-xDiff)+'px';
+                cropRect.style.height =  (parseInt(cropRect.style.height) + yDiff)+'px';
+                cropRect.style.width = (parseInt(cropRect.style.width)+xDiff)+'px';
+               }else{
+                cropRect.style.top = (parseInt(cropRect.style.top)+yDiff )+'px';
+                cropRect.style.left = (parseInt(cropRect.style.left)+xDiff)+'px';
+                cropRect.style.height =  (parseInt(cropRect.style.height) - yDiff)+'px';
+                cropRect.style.width = (parseInt(cropRect.style.width)-xDiff)+'px';
+               }
 
-                if(parseFloat(prevMouseX) > e.clientX && parseFloat(prevMouseY) > e.clientY ){
-                cropRect.style.top = (parseInt(cropRect.style.top)-Math.abs(e.movementY))+'px';
-                cropRect.style.left = (parseInt(cropRect.style.left)-Math.abs(e.movementX))+'px';
-                cropRect.style.height =  (cropRect.offsetHeight + Math.abs(e.movementY))+'px';
-                cropRect.style.width = (cropRect.offsetWidth+Math.abs(e.movementX))+'px';
-
-             
-            }
                 break;
-
                 case "ns-resize-one":
-                    if(parseFloat(prevMouseX) == e.clientX && parseFloat(prevMouseY) > e.clientY  ){
-                        cropRect.style.top = (parseInt(cropRect.style.top)-Math.abs(e.movementY))+'px';
-                        cropRect.style.height =  (cropRect.offsetHeight + Math.abs(e.movementY))+'px';
-                
+                    if( bdRect.y > e.clientY){  
+                        cropRect.style.top = (parseInt(cropRect.style.top)-yDiff)+'px';
+                        cropRect.style.height =  (parseInt(cropRect.style.height) + yDiff)+'px';
+                    }else{
+
+                        cropRect.style.top = (parseInt(cropRect.style.top)+yDiff)+'px';
+                        cropRect.style.height =  (parseInt(cropRect.style.height) - yDiff)+'px';
+                        
                     }
                 break;
-
                 case "nesw-resize-one":
-                if(parseFloat(prevMouseX) > e.clientX && parseFloat(prevMouseY) > e.clientY  ){   
-                cropRect.style.height =  (cropRect.offsetHeight + Math.abs(e.movementY))+'px';
-                cropRect.style.width = (cropRect.offsetWidth+Math.abs(e.movementX))+'px';
-
-         
+                    if(bdRect.y > e.clientY ){
+                        cropRect.style.top = (parseInt(cropRect.style.top)-yDiff )+'px';
+                        cropRect.style.height =  (parseInt(cropRect.style.height) + yDiff)+'px';
+                        cropRect.style.width = (parseInt(cropRect.style.width)+xDiff)+'px';
+                    }else{
+                        cropRect.style.top = (parseInt(cropRect.style.top)+yDiff )+'px';
+                        cropRect.style.height =  (parseInt(cropRect.style.height) - yDiff)+'px';
+                        cropRect.style.width = (parseInt(cropRect.style.width)-xDiff)+'px'; 
                     }
-
+            
                 break;
                 case "ew-resize-one":
-                    if(parseFloat(prevMouseX) > e.clientX && parseFloat(prevMouseY) == e.clientY  ){
-                        cropRect.style.width = (cropRect.offsetWidth+Math.abs(e.movementX))+'px';
+                    if( (bdRect.x+ parseInt(bdRect.width) ) < e.clientX ){
+                        cropRect.style.width = (parseInt(cropRect.style.width)+xDiff)+'px';
+                    }else{
 
+                        cropRect.style.width = (parseInt(cropRect.style.width)-xDiff)+'px';
                     }
+                        
+                   
                 break;
                 case "nwse-resize-two":
-                    if(parseFloat(prevMouseX) > e.clientX && parseFloat(prevMouseY) > e.clientY  ){
-                cropRect.style.height =  (cropRect.offsetHeight + Math.abs(e.movementY))+'px';
-                cropRect.style.width = (cropRect.offsetWidth+Math.abs(e.movementX))+'px';
+                    if( (bdRect.x+ parseInt(bdRect.width) ) < e.clientX ){ 
+                cropRect.style.height =  (parseInt(cropRect.style.height)+ yDiff)+'px';
+                cropRect.style.width = (parseInt(cropRect.style.width)+xDiff)+'px';
+                    }else{
 
-            
+                        cropRect.style.height =  (parseInt(cropRect.style.height)- yDiff)+'px';
+                        cropRect.style.width = (parseInt(cropRect.style.width)-xDiff)+'px';
+
                     }
                 break;
                 case "ns-resize-two":
-                    if(parseFloat(prevMouseX) == e.clientX && parseFloat(prevMouseY) > e.clientY  ){
-                    cropRect.style.height =  (cropRect.offsetHeight + Math.abs(e.movementY))+'px'; 
-                    
-                   
-                    }
+                    if( (bdRect.y+ parseInt(bdRect.height) ) < e.clientY ){  
+                    cropRect.style.height =  (parseInt(cropRect.style.height) + yDiff)+'px';
+                    }else{
+                        cropRect.style.height =  (parseInt(cropRect.style.height) - yDiff)+'px';
+                    } 
                 break;
                 case "nesw-resize-two":
-                    if(parseFloat(prevMouseX) < e.clientX && parseFloat(prevMouseY) < e.clientY  ){
-                    cropRect.style.left = (parseInt(cropRect.style.left)-Math.abs(e.movementX))+'px';
-                    cropRect.style.height =  (cropRect.offsetHeight + Math.abs(e.movementY))+'px';
-                    cropRect.style.width = (cropRect.offsetWidth+Math.abs(e.movementX))+'px';
-
+                    if((bdRect.y+parseInt(bdRect.height)) < e.clientY){ 
+                    cropRect.style.left = (parseInt(cropRect.style.left)-xDiff)+'px';
+                    cropRect.style.height =  (parseInt(cropRect.style.height)+ yDiff)+'px';
+                    cropRect.style.width = (parseInt(cropRect.style.width)+xDiff)+'px';
+                    }else{
+                        cropRect.style.left = (parseInt(cropRect.style.left)+xDiff)+'px';
+                    cropRect.style.height =  (parseInt(cropRect.style.height)- yDiff)+'px';
+                    cropRect.style.width = (parseInt(cropRect.style.width)-xDiff)+'px';
                     }
                 break;
                 case "ew-resize-two":
-                    if(parseFloat(prevMouseX) > e.clientX && parseFloat(prevMouseY) == e.clientY  ){
-                    cropRect.style.left = (parseInt(cropRect.style.left)-Math.abs(e.movementX))+'px';
-                    cropRect.style.width = (cropRect.offsetWidth+Math.abs(e.movementX))+'px';
-
-                    
+                    if(bdRect.x > e.clientX){
+                    cropRect.style.left = (parseInt(cropRect.style.left)-xDiff)+'px';
+                    cropRect.style.width = (parseInt(cropRect.style.width)+xDiff)+'px';
+                    }else{
+                        cropRect.style.left = (parseInt(cropRect.style.left)+xDiff)+'px';
+                        cropRect.style.width = (parseInt(cropRect.style.width)-xDiff)+'px';
                     }
                 break;
-
-                
              }
+            }
 
-             cropRect.querySelector('#nwse-resize-one').style = boxStyle + `cursor:nwse-resize;margin-left:-6px;margin-top:-6px;position:absolute;`;
+                    cropRect.querySelector('#nwse-resize-one').style = boxStyle + `cursor:nwse-resize;margin-left:-6px;margin-top:-6px;position:absolute;`;
                     cropRect.querySelector('#ns-resize-one').style = boxStyle + `cursor:ns-resize;margin-left:${( cropRect.offsetWidth / 2) - 6}px; margin-top: -7px; position:absolute;`;
                     cropRect.querySelector('#nesw-resize-one').style = boxStyle + `cursor:nesw-resize;margin-left:${cropRect.offsetWidth - 6}px; margin-top: -6px;position:absolute; `
                     cropRect.querySelector('#ew-resize-one').style = boxStyle + `cursor:ew-resize;margin-left:${cropRect.offsetWidth - 7}px; margin-top: ${(cropRect.offsetHeight/ 2) - 7}px;position:absolute;`
@@ -891,12 +850,6 @@ class jsCrop {
                     cropRect.querySelector('#nesw-resize-two').style = boxStyle + `cursor:nesw-resize;margin-left:-7px; margin-top:${cropRect.offsetHeight - 7}px;position:absolute;`;
                     cropRect.querySelector('#ew-resize-two').style = boxStyle + `cursor:ew-resize;margin-left:-6px; margin-top: ${(cropRect.offsetHeight / 2) - 6}px; position:absolute;`;
                     cropRect.setAttribute('data-prev-mousepos',`${e.clientX}-${e.clientY}`);
-
-
-            }else{
-
-             
-            
             }
         }
     }
