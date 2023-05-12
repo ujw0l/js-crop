@@ -531,6 +531,7 @@ class jsCrop {
     endCrop() {
 
         let cropRect = document.querySelector('#cropRect');
+        
         if (undefined != cropRect) {
             let startCo = cropRect.getAttribute('data-start-xy').split(',');
             let cropImg = document.querySelector('#js-crop-image');
@@ -724,6 +725,7 @@ class jsCrop {
             ewResizeTwo.setAttribute('draggable', false)
             ewResizeTwo.addEventListener('mousedown', () => {
                 cropRect.setAttribute('data-prev-mousepos','')
+                
                 imgEl.setAttribute('data-mouse-status','up')
                 cropRect.setAttribute('data-resize', "ew-resize-two")})
             ewResizeTwo.addEventListener('mouseup', () => cropRect.setAttribute('data-resize', ""));;
@@ -743,13 +745,14 @@ class jsCrop {
         }else{ 
 
             let imgBdRect = imgEl.getBoundingClientRect();  
+            let bdRect = cropRect.getBoundingClientRect();  
 
           if('cropRect' != e.target.id && imgBdRect.x <= e.clientX && imgBdRect.y <= e.clientY && (imgBdRect.x+imgBdRect.width) >= e.clientX && (imgBdRect.y+imgBdRect.height) >= e.clientY    ){
          
 
 
             if( null != cropRect.getAttribute('data-prev-mousepos') ){
-            let bdRect = cropRect.getBoundingClientRect();   
+            
             let prevPos =  cropRect.getAttribute('data-prev-mousepos').split('-');
                
                 let xDiff =   Math.abs(parseInt( prevPos[0] ) -  e.clientX);
@@ -844,6 +847,8 @@ class jsCrop {
              }
             }
 
+         
+                    cropRect.setAttribute('data-start-xy', (bdRect.x - imgBdRect.x ) + ',' + (bdRect.y - imgBdRect.y));
                     cropRect.querySelector('#nwse-resize-one').style = boxStyle + `cursor:nwse-resize;margin-left:-6px;margin-top:-6px;position:absolute;`;
                     cropRect.querySelector('#ns-resize-one').style = boxStyle + `cursor:ns-resize;margin-left:${( cropRect.offsetWidth / 2) - 6}px; margin-top: -7px; position:absolute;`;
                     cropRect.querySelector('#nesw-resize-one').style = boxStyle + `cursor:nesw-resize;margin-left:${cropRect.offsetWidth - 6}px; margin-top: -6px;position:absolute; `
@@ -853,6 +858,8 @@ class jsCrop {
                     cropRect.querySelector('#nesw-resize-two').style = boxStyle + `cursor:nesw-resize;margin-left:-7px; margin-top:${cropRect.offsetHeight - 7}px;position:absolute;`;
                     cropRect.querySelector('#ew-resize-two').style = boxStyle + `cursor:ew-resize;margin-left:-6px; margin-top: ${(cropRect.offsetHeight / 2) - 6}px; position:absolute;`;
                     cropRect.setAttribute('data-prev-mousepos',`${e.clientX}-${e.clientY}`);
+                    
+                   
             }
             
         }

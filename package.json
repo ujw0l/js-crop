@@ -1,6 +1,6 @@
 {
   "name": "js-crop",
-  "version": "2.5.3",
+  "version": "2.5.4",
   "description": "Vanilla JS Library which enables image cropping",
   "main": "js-crop.js",
   "scripts": {
