@@ -1,6 +1,7 @@
 <h1 align="center">Welcome to Js Crop 👋</h1>
+
 <p>
-  <img src="https://img.shields.io/badge/version-2.5.5-blue.svg?cacheSeconds=2592000" />
+  <img src="https://img.shields.io/badge/version-3.0.0-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/ujw0l/js-crop#readme">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" target="_blank" />
   </a>
@@ -10,10 +11,21 @@
   <a href="https://tidelift.com/subscription/pkg/npm-js-crop?utm_source=npm-js-crop&utm_medium=referral&utm_campaign=readme">
     <img alt="License: MIT" src="https://tidelift.com/badges/package/npm/js-crop" target="_blank" />
   </a>
-
 </p>
 
-> Js Library to enable image cropping with built in UI(with color customization options to fit look and feel of you website/web app)
+> Lightweight JavaScript image cropping library with a built-in customizable UI and support for desktop, mobile, and touch devices.
+
+## Features
+
+- Image cropping with built-in UI
+- 📱 Mobile and touch device support
+- 🖱️ Desktop mouse support
+- Touch-based crop movement and interaction
+- Customizable UI colors
+- JPEG and PNG output
+- Configurable image quality
+- Custom buttons and callbacks
+- No framework required
 
 ## Install
 
@@ -23,83 +35,239 @@ npm i js-crop
 
 ## Script
 
-```sh
-<script type:"text/javascript" src="src/js-crop.js"></script>
-or 
-
-<script type:"text/javascript" src="src/js-crop.min.js"></script>
+```html
+<script type="text/javascript" src="src/js-crop.js"></script>
 ```
 
-## Initialize 
+Or use the minified version:
 
-```sh
+```html
+<script type="text/javascript" src="src/js-crop.min.js"></script>
+```
 
- new jsCrop('selector', (Image element or upload button selector/s refer to querySelector and querySelectorAll)
-            { 
-              extButton : (optional,extension which adds button after save image button)
-                        { 
-                          buttonText : string, (Optional, text for button)
-                          buttonTitle : string, (Optional, title for button)
-                          buttonCSS   : string, (Optional, additional styling for extension button)
-                          callBack : function, (Required, callback function  which is passed blob of cropped image, on button click )
-                        },
-               customColor : (Optional,Js object conataining options for UI color customization)
-                        {  
-                            overlayBgColor : string, (Optional, background color for overlay)
-                            toolbarBgColor : string, (Optional, background color for toolbar)
-                            buttonBgColor :string,    (Optional, background color for buttons)
-                            buttonFontColor : string, (Optional, font color for button)
-                            
-                      }, 
-              imageType:string,(optinal,cropped image type,either jpeg or png)
-              imageQuality: number,(opaitional, cropped image quality range 0 to 1);                
-              saveButton:boolean (optional, set false to hide save button)
+### CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/js-crop@3.0.0/js-crop.min.js"></script>
+```
+
+Or automatically use the latest published version:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/js-crop/js-crop.min.js"></script>
+```
+
+## Mobile Support
+
+Starting with **Js Crop 3.0**, the crop interface supports mobile and touch-enabled devices.
+
+Users can interact with the cropping interface using touch gestures on phones and tablets while desktop users can continue using mouse controls.
+
+Supported input includes:
+
+- Desktop mouse
+- Mobile touch
+- Tablets
+- Touchscreen devices
+
+No separate mobile version or additional dependency is required.
+
+## Initialize
+
+```js
+new jsCrop(
+  'selector',
+  {
+    extButton: {
+      buttonText: 'Button Text',
+      buttonTitle: 'Button Title',
+      buttonCSS: 'your-custom-css',
+      callBack: function(blob) {
+        // Cropped image blob
+      }
+    },
+
+    customColor: {
+      overlayBgColor: '#000000',
+      toolbarBgColor: '#ffffff',
+      buttonBgColor: '#333333',
+      buttonFontColor: '#ffffff'
+    },
+
+    imageType: 'jpeg',
+    imageQuality: 1,
+    saveButton: true
   },
-  [ (Array of one or multiple button objects  like  one below ☟)
-    { (Object with button properties)
-      buttonText : string, (Optional, text for button)
-      buttonTitle : string,(Optional, title for button)
-      relParam : any,(Optional, any data type to be relayed back to callback function as second parameter)
-      buttonEvent : event, (Optional, event to attach button for callback default click,  refer to "addEventListener" events)
-      buttonCSS : string, (Optional, additinal styling for button)
-      callBack : function,(required, callback function for button, which gets image blob as first parameter and relParam as second )
-      },
-  
-  ]
-  );
 
-*parameter 1 (required) : selector for images to be cropped, one or multiple
-*parameter 2 (optional): object to modify UI look and functionalities and develop library extension
-*parameter 3 (optional): Array which contains objects for one or multiple buttons 
+  [
+    {
+      buttonText: 'Custom Button',
+      buttonTitle: 'Custom Button',
+      relParam: 'optional-data',
+      buttonEvent: 'click',
+      buttonCSS: 'your-custom-css',
+
+      callBack: function(blob, relParam) {
+        // blob = cropped image
+        // relParam = optional supplied value
+      }
+    }
+  ]
+);
+```
+
+## Parameters
+
+### Parameter 1 — Selector
+
+**Required**
+
+Selector for one or multiple images or upload controls.
+
+Uses normal JavaScript `querySelector` / `querySelectorAll` selector syntax.
+
+```js
+new jsCrop('.crop-image');
+```
+
+### Parameter 2 — Options
+
+**Optional**
+
+```js
+{
+  extButton: {
+    buttonText: string,
+    buttonTitle: string,
+    buttonCSS: string,
+    callBack: function
+  },
+
+  customColor: {
+    overlayBgColor: string,
+    toolbarBgColor: string,
+    buttonBgColor: string,
+    buttonFontColor: string
+  },
+
+  imageType: string,
+  imageQuality: number,
+  saveButton: boolean
+}
+```
+
+### `extButton`
+
+Optional extension button displayed after the Save Image button.
+
+```js
+extButton: {
+  buttonText: string,
+  buttonTitle: string,
+  buttonCSS: string,
+  callBack: function
+}
+```
+
+### `customColor`
+
+Optional UI color customization.
+
+```js
+customColor: {
+  overlayBgColor: string,
+  toolbarBgColor: string,
+  buttonBgColor: string,
+  buttonFontColor: string
+}
+```
+
+### `imageType`
+
+Optional output image type.
+
+Supported:
+
+```text
+jpeg
+png
+```
+
+### `imageQuality`
+
+Optional cropped image quality between:
+
+```text
+0 and 1
+```
+
+Example:
+
+```js
+imageQuality: 0.9
+```
+
+### `saveButton`
+
+Set to `false` to hide the built-in save button.
+
+```js
+saveButton: false
+```
+
+## Custom Buttons
+
+The third parameter accepts an array containing one or multiple custom buttons.
+
+```js
+[
+  {
+    buttonText: 'Upload',
+    buttonTitle: 'Upload Cropped Image',
+    relParam: 'my-data',
+    buttonEvent: 'click',
+    buttonCSS: 'custom-button-class',
+
+    callBack: function(blob, relParam) {
+      console.log(blob);
+      console.log(relParam);
+    }
+  }
+]
 ```
 
 ## Contributing
 
-Contributions, issues and feature requests are welcome. Feel free to check [issues page](https://github.com/ujw0l/js-crop/issues) if you want to contribute.
+Contributions, issues and feature requests are welcome.
+
+Feel free to check the [issues page](https://github.com/ujw0l/js-crop/issues).
 
 ## Author
 
 👤 **ujw0l**
 
-* Twitter 👉 [@bastakotiujwol](https://twitter.com/bastakotiujwol)
-* Github 👉 [@ujw0l](https://github.com/ujw0l)
+- Twitter 👉 [@bastakotiujwol](https://twitter.com/bastakotiujwol)
+- GitHub 👉 [@ujw0l](https://github.com/ujw0l)
 
-## Show your support
-
-## Show your support
+## Show Your Support
 
 Please ⭐️ this repository if this project helped you!
+
 <ul>
 <li>
 <a href="https://www.patreon.com/ujw0l">
   <img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="160">
 </a>
 </li>
+
 <li>
-<a href="https://www.buymeacoffee.com/ujw0l" title=" Buy me Beer"> 🍺 </a>
+<a href="https://www.buymeacoffee.com/ujw0l" title="Buy me Beer">🍺</a>
 </li>
+
 <li>
-<a href="https://tidelift.com/subscription/pkg/npm-js-crop?utm_source=npm-js-crop&utm_medium=referral&utm_campaign=readme">Get supported js-crop with the Tidelift Subscription</a>
+<a href="https://tidelift.com/subscription/pkg/npm-js-crop?utm_source=npm-js-crop&utm_medium=referral&utm_campaign=readme">
+Get supported js-crop with the Tidelift Subscription
+</a>
 </li>
 </ul>
 
@@ -108,6 +276,3 @@ Please ⭐️ this repository if this project helped you!
 Copyright © 2019 [ujw0l](https://github.com/ujw0l).
 
 📜 This project is [MIT](https://github.com/ujw0l/js-crop/blob/master/LICENSE) licensed.
-
-***
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
