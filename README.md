@@ -26,6 +26,7 @@
 - Configurable image quality
 - Custom buttons and callbacks
 - No framework required
+- Responsive
 
 ## Install
 
