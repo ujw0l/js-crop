@@ -1,8 +1,5 @@
 # Security Policy
 
-https://tidelift.com/security
-
-
 ## Supported Versions
 
 
