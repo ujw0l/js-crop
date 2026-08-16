@@ -1,10 +1,10 @@
 {
   "name": "js-crop",
-  "version": "3.1.1",
-  "description": "Vanilla JS Library which enables image cropping",
+  "version": "3.1.2",
+  "description": "Dependency-free JavaScript image cropper with a responsive built-in UI",
   "main": "js-crop.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --check js-crop.js && node --check js-crop.min.js"
   },
   "repository": {
     "type": "git",
